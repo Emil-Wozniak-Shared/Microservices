@@ -4,7 +4,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
-import org.springframework.web.reactive.function.server.router
+import org.springframework.web.servlet.function.router
 import pl.emil.microservices.model.user.User
 import pl.emil.microservices.web.handlers.ApiHandler
 import pl.emil.microservices.web.handlers.CommentHandler

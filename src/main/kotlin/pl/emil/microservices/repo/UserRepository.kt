@@ -1,7 +1,7 @@
 package pl.emil.microservices.repo
 
-import org.springframework.data.r2dbc.repository.R2dbcRepository
+import org.springframework.data.jpa.repository.JpaRepository
 import pl.emil.microservices.model.user.User
 import java.util.*
 
-interface UserRepository : R2dbcRepository<User, UUID>
+interface UserRepository : JpaRepository<User, UUID>

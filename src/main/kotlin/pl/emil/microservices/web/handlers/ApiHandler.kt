@@ -3,17 +3,16 @@ package pl.emil.microservices.web.handlers
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
-import org.springframework.web.reactive.function.server.ServerRequest
-import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Mono
+import org.springframework.web.servlet.function.ServerRequest
+import org.springframework.web.servlet.function.ServerResponse
 import java.util.*
 
 interface ApiHandler<T> {
-    fun all(request: ServerRequest): Mono<ServerResponse>
-    fun getOne(request: ServerRequest): Mono<ServerResponse>
-    fun create(request: ServerRequest): Mono<ServerResponse>
-    fun update(request: ServerRequest): Mono<ServerResponse>
-    fun delete(request: ServerRequest): Mono<ServerResponse>
+    fun all(request: ServerRequest): ServerResponse
+    fun getOne(request: ServerRequest): ServerResponse
+    fun create(request: ServerRequest): ServerResponse
+    fun update(request: ServerRequest): ServerResponse
+    fun delete(request: ServerRequest): ServerResponse
 }
 
 fun ServerRequest.mediaType(): MediaType {

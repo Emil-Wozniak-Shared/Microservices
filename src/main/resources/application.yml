@@ -1,5 +1,11 @@
 spring:
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/test
+  main:
+    web-application-type: servlet
+  datasource:
+    url: jdbc:postgresql://localhost:5432/test
     username: ifzz
     password: ifzz
+    platform: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update

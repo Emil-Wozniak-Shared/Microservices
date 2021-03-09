@@ -1,13 +1,15 @@
 package pl.emil.microservices.model.user
 
-import org.springframework.data.annotation.Id
-import org.springframework.data.relational.core.mapping.Table
 import java.util.*
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Size
 
-@Table(value = "users")
+@Entity
+@Table(name = "users")
 data class User(
     @Id
     var id: UUID? = UUID.randomUUID(),

@@ -1,47 +1,46 @@
 package pl.emil.microservices.model
 
-import io.r2dbc.postgresql.codec.Json
 import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
-import org.springframework.data.annotation.Version
-import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.*
+import javax.persistence.*
+import javax.validation.constraints.NotNull
 
-@Table(value = "posts")
+@Entity
+@Table(name = "posts")
 data class Post(
     @Id
-    @Column("id")
-    var id: UUID? = null,
+    @Column(name = "id")
+    var id: UUID? = UUID.randomUUID(),
 
-    @Column("title")
+    @NotNull(message = "Title could not be null")
+    @Column(name = "title")
     var title: String? = null,
 
-    @Column("content")
+    @Column(name = "content")
     var content: String? = null,
 
-    @Column("metadata")
-    var metadata: Json? = null,
+    @Column(name = "metadata")
+    var metadata: String? = null,
 
-    @Column("status")
-    var status: Status? = Status.DRAFT,
+    @Column(name = "status")
+    var status: Status? = null,
 
-    @Column("created_at")
     @CreatedDate
+    @Column(name = "created_at")
     var createdAt: LocalDateTime? = null,
 
-    @Column("updated_at")
     @LastModifiedDate
+    @Column(name = "updated_at")
     var updatedAt: LocalDateTime? = null,
 
-    @Column("version")
     @Version
+    @Column(name = "version")
     var version: Long? = null
 
-
-) {
+) : Serializable {
     enum class Status {
         DRAFT, PENDING_MODERATION, PUBLISHED
     }
