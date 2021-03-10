@@ -1,37 +1,35 @@
 package pl.emil.microservices.model
 
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
-@Entity
-@Table(name = "comments")
+@Table(value = "comments")
 data class Comment(
     @Id
-    @Column(name = "id")
+    @Column(value = "id")
     var id: UUID? = UUID.randomUUID(),
 
-    @Column(name = "content")
+    @Column(value = "content")
     var content: String? = null,
 
-    @Column(name = "post_id")
+    @Column(value = "post_id")
     var postId: UUID? = null,
 
-    @Column(name = "created_at")
+    @Column(value = "created_at")
     @CreatedDate
     var createdAt: LocalDateTime? = null,
 
-    @Column(name = "updated_at")
+    @Column(value = "updated_at")
     @LastModifiedDate
     var updatedAt: LocalDateTime? = null,
 
-    @Column(name = "version")
+    @Column(value = "version")
     @Version
     var version: Long? = null
 )

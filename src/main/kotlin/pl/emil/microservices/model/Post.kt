@@ -1,47 +1,50 @@
 package pl.emil.microservices.model
 
 import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.annotation.Version
+import org.springframework.data.domain.Persistable
+import org.springframework.data.relational.core.mapping.Column
+import org.springframework.data.relational.core.mapping.Table
 import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.*
 import javax.validation.constraints.NotNull
 
-@Entity
-@Table(name = "posts")
+@Table(value = "posts")
 data class Post(
     @Id
-    @Column(name = "id")
+    @Column(value = "id")
     var id: UUID? = UUID.randomUUID(),
 
     @NotNull(message = "Title could not be null")
-    @Column(name = "title")
+    @Column(value = "title")
     var title: String? = null,
 
-    @Column(name = "content")
+    @Column(value = "content")
     var content: String? = null,
 
-    @Column(name = "metadata")
+    @Column(value = "metadata")
     var metadata: String? = null,
 
-    @Column(name = "status")
+    @Column(value = "status")
     var status: Status? = null,
 
     @CreatedDate
-    @Column(name = "created_at")
+    @Column(value = "created_at")
     var createdAt: LocalDateTime? = null,
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Column(value = "updated_at")
     var updatedAt: LocalDateTime? = null,
 
     @Version
-    @Column(name = "version")
-    var version: Long? = null
-
+    @Column(value = "version")
+    var version: Long? = null,
 ) : Serializable {
     enum class Status {
         DRAFT, PENDING_MODERATION, PUBLISHED
     }
+
 }

@@ -5,12 +5,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.data.domain.Sort.Direction.ASC
 import org.springframework.data.domain.Sort.Direction.DESC
-import org.springframework.web.servlet.function.ServerRequest
-import org.springframework.web.servlet.function.ServerResponse
-import org.springframework.web.servlet.function.ServerResponse.badRequest
+import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.badRequest
+import reactor.core.publisher.Mono
 
 private fun asPageable(request: ServerRequest): Pageable {
-    val params = request.params()
+    val params = request.queryParams()
     if (params.keys.size > 2) {
         val page = params.getFirst("page") ?: "0"
         val size = params.getFirst("size") ?: "10"
@@ -51,8 +52,8 @@ private fun isSortable(sortValue: String): Boolean {
 
 fun pageRequest(
     request: ServerRequest,
-    callback: (Pageable) -> ServerResponse
-): ServerResponse {
+    callback: (Pageable) -> Mono<ServerResponse>
+): Mono<ServerResponse> {
     val pageable = asPageable(request)
     return if (pageable.isPaged) callback.invoke(pageable)
     else badRequest().build()

@@ -4,32 +4,19 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
-import org.springframework.web.servlet.function.router
-import pl.emil.microservices.model.user.User
+import org.springframework.web.reactive.function.server.router
+import pl.emil.microservices.model.Comment
+import pl.emil.microservices.model.Post
 import pl.emil.microservices.web.handlers.ApiHandler
-import pl.emil.microservices.web.handlers.CommentHandler
-import pl.emil.microservices.web.handlers.PostHandler
 
 @Configuration
 class Routes {
     @Bean(value = ["allRoutes"])
     fun routes(
-        users: ApiHandler<User>,
-        posts: PostHandler,
-        comments: CommentHandler,
+        posts: ApiHandler<Post>,
+        comments: ApiHandler<Comment>,
     ) = router {
         "api".nest {
-            "/users".nest {
-                accept(APPLICATION_JSON, APPLICATION_XML).nest {
-                    GET("", users::all)
-                    GET("/{id}", users::getOne)
-                    contentType(APPLICATION_JSON).nest {
-                        POST("", users::create)
-                        PUT("/{id}", users::update)
-                    }
-                    DELETE("/{id}", users::delete)
-                }
-            }
             "/posts".nest {
                 accept(APPLICATION_JSON, APPLICATION_XML).nest {
                     "".nest {
@@ -42,7 +29,7 @@ class Routes {
                         DELETE("", posts::delete)
                     }
                     "comments".nest {
-                        GET("", comments::getByPostId)
+                        GET("", comments::getOne)
                         POST("", comments::create)
                     }
                 }

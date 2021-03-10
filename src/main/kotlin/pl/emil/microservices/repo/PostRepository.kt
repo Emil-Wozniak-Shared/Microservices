@@ -1,7 +1,7 @@
 package pl.emil.microservices.repo
 
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import pl.emil.microservices.model.Post
 import java.util.*
 
-interface PostRepository : JpaRepository<Post, UUID>
+interface PostRepository : ReactiveCrudRepository<Post, UUID>

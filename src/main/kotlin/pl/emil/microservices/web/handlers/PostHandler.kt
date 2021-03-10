@@ -1,52 +1,81 @@
 package pl.emil.microservices.web.handlers
 
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
 import org.springframework.stereotype.Component
-import org.springframework.web.servlet.function.ServerRequest
-import org.springframework.web.servlet.function.ServerResponse
-import org.springframework.web.servlet.function.ServerResponse.*
+import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.*
+import org.springframework.web.reactive.function.server.body
 import pl.emil.microservices.model.Post
 import pl.emil.microservices.repo.PostRepository
+import reactor.core.publisher.Mono
 import java.net.URI
-import java.time.LocalDateTime
+import java.time.LocalDateTime.now
 
 @Component
-class PostHandler(private val posts: PostRepository) : ApiHandler<Post> {
-    override fun all(request: ServerRequest): ServerResponse =
+class PostHandler(
+    private val posts: PostRepository,
+    private val validator: RequestValidator
+) : ApiHandler<Post> {
+    override fun all(request: ServerRequest): Mono<ServerResponse> =
         ok().body(this.posts.findAll())
+            .doOnError { throw Exception(it) }
 
-    override fun getOne(request: ServerRequest): ServerResponse =
-        this.posts
-            .findById(request.id())
-            .map { ok().contentType(request.mediaType()).body(it) }
-            .orElseGet { notFound().build() }
+    override fun getOne(request: ServerRequest): Mono<ServerResponse> =
+        Mono.just(request)
+            .flatMap {
+                ok()
+                    .contentType(request.mediaType())
+                    .body(this.posts.findById(request.id()))
+            }
+            .onErrorResume {
+                status(INTERNAL_SERVER_ERROR).body<String>(Mono.just(it.message!!))
+            }
 
-    override fun create(request: ServerRequest): ServerResponse =
+    @Transactional
+    override fun create(request: ServerRequest): Mono<ServerResponse> =
         request
-            .body(Post::class.java).let { post ->
-                post.createdAt = LocalDateTime.now()
-                this.posts.save(post)
-                created(URI.create("/posts/" + post.id)).build()
+            .validateBody<Post>(validator, "title", "content")
+            .doOnNext { post ->
+                post.createdAt = now()
+                this.posts.save(post).subscribe()
+            }
+            .flatMap {
+                created(URI.create("/posts/${it.id}")).build()
+            }
+            .onErrorResume {
+                badRequest().body(Mono.just(it.message!!))
             }
 
-    override fun update(request: ServerRequest): ServerResponse {
-        this.posts.findById(request.id())
-            .ifPresent {
-                val p2 = request.body(Post::class.java)
-                it.title = p2.title
-                it.content = p2.content
-                it.metadata = p2.metadata
-                it.status = p2.status
-                this.posts.save(it)
+    override fun update(request: ServerRequest): Mono<ServerResponse> =
+        Mono
+            .zip(
+                { data: Array<Any> ->
+                    val p: Post = data[0] as Post
+                    val p2: Post = data[1] as Post
+                    p.title = p2.title
+                    p.content = p2.content
+                    p.metadata = p2.metadata
+                    p.status = p2.status
+                    p
+                },
+                this.posts.findById(request.id()),
+                request.bodyToMono(Post::class.java)
+            )
+            .cast(Post::class.java)
+            .flatMap<Any>(this.posts::save)
+            .flatMap { noContent().build() }
+            .onErrorResume {
+                badRequest().body<String>(Mono.just(it.message!!))
             }
-        return noContent().build()
-    }
 
-
-    override fun delete(request: ServerRequest): ServerResponse =
-        this.posts.findById(request.id())
-            .map {
-                this.posts.delete(it)
-                noContent().build()
-            }.orElseGet { badRequest().build() }
+    override fun delete(request: ServerRequest): Mono<ServerResponse> =
+        this.posts
+            .deleteById(request.id())
+            .flatMap { noContent().build() }
+            .onErrorResume {
+                badRequest().body<String>(Mono.just(it.message!!))
+            }
 
 }

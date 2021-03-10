@@ -36,14 +36,15 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-jetty")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+//    implementation("org.springframework.boot:spring-boot-starter-web") {
+//        exclude(group = "org.springframework.boot", module = "spring-boot-starter-tomcat")
+//    }
+//    implementation("org.springframework.boot:spring-boot-starter-jetty")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-undertow")
+//    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+//    implementation("org.springframework.boot:spring-boot-starter-undertow")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -63,6 +64,16 @@ dependencies {
 
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.vladmihalcea:hibernate-types-52:2.1.1")
+
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    testImplementation("io.projectreactor:reactor-test")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    runtimeOnly("io.r2dbc:r2dbc-postgresql")
+    runtimeOnly("org.postgresql:postgresql")
+    testImplementation("io.projectreactor:reactor-test")
+    implementation("io.r2dbc:r2dbc-spi:0.9.0.M1")
+    implementation("io.r2dbc:r2dbc-postgresql:0.8.6.RELEASE")
 }
 
 tasks.withType<KotlinCompile> {
