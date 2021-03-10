@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.ServerResponse.*
 import org.springframework.web.reactive.function.server.body
+import pl.emil.microservices.config.exception.ExceptionResponse
 import pl.emil.microservices.model.Post
 import pl.emil.microservices.repo.PostRepository
 import reactor.core.publisher.Mono
@@ -44,10 +45,9 @@ class PostHandler(
             .flatMap {
                 created(URI.create("/posts/${it.id}")).build()
             }
-            .onErrorResume {
-                badRequest().body(Mono.just(it.message!!))
-            }
+            .onErrorResponse()
 
+    @Transactional
     override fun update(request: ServerRequest): Mono<ServerResponse> =
         Mono
             .zip(
@@ -67,7 +67,8 @@ class PostHandler(
             .flatMap<Any>(this.posts::save)
             .flatMap { noContent().build() }
             .onErrorResume {
-                badRequest().body<String>(Mono.just(it.message!!))
+                val response = ExceptionResponse(it.message, it)
+                badRequest().body(Mono.just(response))
             }
 
     override fun delete(request: ServerRequest): Mono<ServerResponse> =

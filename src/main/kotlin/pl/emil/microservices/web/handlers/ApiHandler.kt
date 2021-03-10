@@ -1,5 +1,7 @@
 package pl.emil.microservices.web.handlers
 
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.*
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
@@ -7,7 +9,9 @@ import org.springframework.validation.BeanPropertyBindingResult
 import org.springframework.validation.SmartValidator
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
-import pl.emil.microservices.web.exception.RequestNonValidException
+import org.springframework.web.reactive.function.server.body
+import pl.emil.microservices.config.exception.ExceptionResponse
+import pl.emil.microservices.config.exception.RequestNonValidException
 import reactor.core.publisher.Mono
 import java.util.*
 
@@ -42,5 +46,12 @@ inline fun <reified T> ServerRequest.validateBody(
             val errors = BeanPropertyBindingResult(body, T::class.java.name)
             validator.validate(body as Any, errors, *nonNullFields)
             if (errors.allErrors.isEmpty()) Mono.just(body)
-            else throw RequestNonValidException(message = errors.allErrors.toString())
+            else throw RequestNonValidException(message = errors.toString())
         }
+
+fun Mono<ServerResponse>.onErrorResponse(status: HttpStatus = BAD_REQUEST): Mono<ServerResponse> =
+    this.onErrorResume {
+        ServerResponse
+            .status(status)
+            .body(Mono.just(ExceptionResponse(it.message, it)))
+    }

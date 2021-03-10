@@ -1,5 +1,17 @@
 # Getting Started
 
+## Endpoints
+
+- error prone
+```bash
+echo '{"title": null ,"content": "validate test 5",  "status": "DRAFT"}' | http POST localhost:8080/api/posts
+```
+
+- success
+```bash
+echo '{"title": "Test 13","content": "validate test 3",  "status": "DRAFT"}' | http POST localhost:8080/api/posts
+```
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:
