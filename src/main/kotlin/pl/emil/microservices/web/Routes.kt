@@ -14,7 +14,7 @@ class Routes {
     @Bean(value = ["allRoutes"])
     fun routes(
         posts: ApiHandler<Post>,
-        comments: ApiHandler<Comment>,
+        comments: ApiHandler<Comment>
     ) = router {
         "api".nest {
             "/posts".nest {

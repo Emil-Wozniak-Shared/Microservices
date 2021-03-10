@@ -41,7 +41,7 @@ data class Post(
 
     @Version
     @Column(value = "version")
-    var version: Long? = null,
+    var version: Long? = null
 ) : Serializable {
     enum class Status {
         DRAFT, PENDING_MODERATION, PUBLISHED
