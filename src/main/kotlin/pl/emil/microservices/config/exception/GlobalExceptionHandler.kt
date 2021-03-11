@@ -9,12 +9,13 @@ import org.springframework.core.annotation.Order
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.codec.ServerCodecConfigurer
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.server.RequestPredicates.all
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.RouterFunctions.route
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.status
 import reactor.core.publisher.Mono
 
 @Component
@@ -26,19 +27,13 @@ class GlobalErrorWebExceptionHandler(
 ) : AbstractErrorWebExceptionHandler(attributes, Resources(), context) {
 
     override fun getErrorAttributes(request: ServerRequest, options: ErrorAttributeOptions):
-            MutableMap<String, Any> =
-        super.getErrorAttributes(request, options)
+            MutableMap<String, Any> = super.getErrorAttributes(request, options)
 
     override fun getRoutingFunction(attributes: ErrorAttributes): RouterFunction<ServerResponse> =
         route(all()) { renderErrorResponse(it, attributes as GlobalErrorAttributes) }
 
     private fun renderErrorResponse(request: ServerRequest, attributes: GlobalErrorAttributes): Mono<ServerResponse> =
-        attributes.asErrorResponse(request).run {
-            ServerResponse
-                .status(status)
-                .contentType(APPLICATION_JSON)
-                .body(BodyInserters.fromValue(this))
-        }
+        attributes.asErrorResponse(request)
 
     init {
         super.setMessageWriters(codecConfigurer.writers)

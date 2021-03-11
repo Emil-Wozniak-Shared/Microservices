@@ -5,8 +5,14 @@ import org.springframework.boot.web.error.ErrorAttributeOptions.Include.*
 import org.springframework.boot.web.reactive.error.DefaultErrorAttributes
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
+import org.springframework.web.reactive.function.BodyInserters
+import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.server.ServerRequest
+import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.ServerResponse.status
+import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -27,14 +33,15 @@ data class GlobalErrorAttributes(
         this["message"] = message
     }
 
-    fun asErrorResponse(request: ServerRequest): ExceptionResponse =
+    fun asErrorResponse(request: ServerRequest): Mono<ServerResponse> =
         with(this.getErrorAttributes(request, options)) {
             val status = get("status") as HttpStatus
             val message = get("trace") as String
             val requestId = get("requestId") as String
             val cause = get("exception") as String
             val timestamp = (get("timestamp") as Date).toLocalDate()
-            ExceptionResponse(message, cause, requestId, timestamp, status)
+            val response = ExceptionResponse(message, cause, requestId, timestamp)
+            status(status).contentType(APPLICATION_JSON).body(fromValue(response))
         }
 }
 

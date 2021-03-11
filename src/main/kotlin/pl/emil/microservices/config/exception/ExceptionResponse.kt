@@ -7,6 +7,5 @@ data class ExceptionResponse(
     val message: String?,
     val cause: String? = null,
     val requestId: String? = null,
-    val timestamp: LocalDateTime? = LocalDateTime.now(),
-    val status: HttpStatus = HttpStatus.BAD_REQUEST
+    val timestamp: LocalDateTime? = LocalDateTime.now()
 )
