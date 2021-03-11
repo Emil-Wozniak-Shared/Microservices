@@ -3,11 +3,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
-    repositories {
-        maven {
-            url = uri("https://plugins.gradle.org/m2/")
-        }
-    }
+    repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-allopen:1.5.0-M1")
         classpath(embeddedKotlin("gradle-plugin"))
@@ -48,6 +44,7 @@ val GROOVY_VERSION_ALL = "org.codehaus.groovy:groovy-all:$GROOVY_VERSION"
 val SPOCK_VERSION = "2.0-M4-groovy-3.0"
 val SPOCK_CORE_VERSION = "org.spockframework:spock-core:$SPOCK_VERSION"
 val SPOCK_SPRING_VERSION = "org.spockframework:spock-spring:$SPOCK_VERSION"
+val SPOCK_BOM = "org.spockframework:spock-bom:$SPOCK_VERSION"
 val BYTEBUDDY_VERSION = "net.bytebuddy:byte-buddy:1.10.14"
 val HAMCREST_VERSION = "org.hamcrest:hamcrest-core:2.2"
 
@@ -102,7 +99,7 @@ dependencies {
     implementation(GROOVY)
     testImplementation(SPOCK_CORE_VERSION)
     testImplementation(SPOCK_SPRING_VERSION)
-    testImplementation(platform("org.spockframework:spock-bom:${SPOCK_VERSION}"))
+    testImplementation(platform(SPOCK_BOM))
     implementation(GROOVY_VERSION_ALL)
     testImplementation(CLIB_VERSION)
     testImplementation(HAMCREST_VERSION) // only necessary if Hamcrest matchers are used

@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
@@ -23,7 +22,8 @@ data class GlobalErrorAttributes(
     val message: String = ""
 ) : DefaultErrorAttributes() {
 
-    private val options = ErrorAttributeOptions.of(MESSAGE, BINDING_ERRORS, EXCEPTION, STACK_TRACE)
+    private val all = listOf(MESSAGE, BINDING_ERRORS, EXCEPTION, STACK_TRACE)
+    private val options = ErrorAttributeOptions.of(all)
 
     override fun getErrorAttributes(
         request: ServerRequest,
@@ -33,7 +33,7 @@ data class GlobalErrorAttributes(
         this["message"] = message
     }
 
-    fun asErrorResponse(request: ServerRequest): Mono<ServerResponse> =
+    fun getErrorResponse(request: ServerRequest): Mono<ServerResponse> =
         with(this.getErrorAttributes(request, options)) {
             val status = get("status") as HttpStatus
             val message = get("trace") as String
@@ -45,6 +45,6 @@ data class GlobalErrorAttributes(
         }
 }
 
-fun Date.toLocalDate(): LocalDateTime? = this.toInstant()
+fun Date.toLocalDate(): LocalDateTime = this.toInstant()
     .atZone(ZoneId.systemDefault())
     .toLocalDateTime()
