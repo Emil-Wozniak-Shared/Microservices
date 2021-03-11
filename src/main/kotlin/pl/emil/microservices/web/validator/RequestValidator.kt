@@ -1,26 +1,31 @@
-package pl.emil.microservices.web.handlers
+package pl.emil.microservices.web.validator
 
 import org.springframework.stereotype.Component
 import org.springframework.validation.Errors
 import org.springframework.validation.SmartValidator
+import org.springframework.validation.ValidationUtils.rejectIfEmptyOrWhitespace
+import org.springframework.validation.annotation.Validated
 import org.springframework.validation.beanvalidation.SpringValidatorAdapter
-import pl.emil.microservices.web.validator.LocalValidator
+import pl.emil.microservices.config.constant.FIELD_REQUIRED
 
 @Component
+@Validated
 class RequestValidator(private val validator: LocalValidator) : SmartValidator {
+
     override fun supports(clazz: Class<*>): Boolean = RequestValidator::class.java.isAssignableFrom(clazz)
 
     override fun validate(target: Any, errors: Errors, vararg validationHints: Any?) {
         this.validate(target, errors)
-//        validationHints.forEach {
-//            rejectIfEmptyOrWhitespace(errors, it.toString(), FIELD_REQUIRED)
-//        }
+        validationHints.forEach {
+            rejectIfEmptyOrWhitespace(errors, it.toString(), FIELD_REQUIRED)
+        }
     }
 
+    /**
+     * Don't use it since it will not handle javax annotations.
+     */
     override fun validate(target: Any, errors: Errors) {
         val validatorAdapter = SpringValidatorAdapter(validator)
         validatorAdapter.validate(target, errors)
-//        rejectIfEmptyOrWhitespace(errors, "title", FIELD_REQUIRED)
-//        rejectIfEmptyOrWhitespace(errors, "content", FIELD_REQUIRED)
     }
 }

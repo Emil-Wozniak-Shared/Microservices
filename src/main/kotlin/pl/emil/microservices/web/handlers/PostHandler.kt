@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.server.body
 import pl.emil.microservices.config.exception.ExceptionResponse
 import pl.emil.microservices.model.Post
 import pl.emil.microservices.repo.PostRepository
+import pl.emil.microservices.web.validator.RequestValidator
 import reactor.core.publisher.Mono
 import java.net.URI
 import java.time.LocalDateTime.now
