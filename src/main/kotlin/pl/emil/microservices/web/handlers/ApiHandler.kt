@@ -1,7 +1,7 @@
 package pl.emil.microservices.web.handlers
 
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.BAD_REQUEST
 import org.springframework.http.MediaType
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.MediaType.APPLICATION_XML
@@ -46,12 +46,12 @@ inline fun <reified T> ServerRequest.validateBody(
             val errors = BeanPropertyBindingResult(body, T::class.java.name)
             validator.validate(body as Any, errors, *nonNullFields)
             if (errors.allErrors.isEmpty()) Mono.just(body)
-            else throw RequestNonValidException(message = errors.toString())
+            else throw RequestNonValidException(errors.toString())
         }
 
 fun Mono<ServerResponse>.onErrorResponse(status: HttpStatus = BAD_REQUEST): Mono<ServerResponse> =
     this.onErrorResume {
         ServerResponse
             .status(status)
-            .body(Mono.just(ExceptionResponse(it.message, it)))
+            .body(Mono.just(ExceptionResponse(it.message, it.toString())))
     }

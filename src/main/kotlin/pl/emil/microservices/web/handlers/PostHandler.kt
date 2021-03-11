@@ -45,7 +45,7 @@ class PostHandler(
             .flatMap {
                 created(URI.create("/posts/${it.id}")).build()
             }
-            .onErrorResponse()
+//            .onErrorResponse()
 
     @Transactional
     override fun update(request: ServerRequest): Mono<ServerResponse> =
@@ -67,7 +67,7 @@ class PostHandler(
             .flatMap<Any>(this.posts::save)
             .flatMap { noContent().build() }
             .onErrorResume {
-                val response = ExceptionResponse(it.message, it)
+                val response = ExceptionResponse(it.message, it.toString())
                 badRequest().body(Mono.just(response))
             }
 
