@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: microservice-posts
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/test
+    username: ifzz
+    password: ifzz
+  jpa:
+    hibernate:
+      ddl-auto: update
+  devtools:
+    restart:
+      enabled: true
+server:
+  port: 8080
+eureka:
+  client:
+    allow-redirects: true
+    service-url:
+      defaultZone: http://localhost:8010/eureka/
+management:
+  cloudfoundry:
+    enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"

@@ -1,13 +1,11 @@
+server:
+  port: 8010
 spring:
-  main:
-    web-application-type: reactive
-
-    allow-bean-definition-overriding: true
-  r2dbc:
-    url: r2dbc:postgresql://localhost:5432/test
-    username: ifzz
-    password: ifzz
-  jpa:
-    hibernate:
-      ddl-auto: update
-
+  application:
+    name: microservice-server
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://localhost:8010/eureka/

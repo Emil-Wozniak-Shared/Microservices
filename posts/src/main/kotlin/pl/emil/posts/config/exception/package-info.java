@@ -1,0 +1,1 @@
+package pl.emil.posts.config.exception;
