@@ -6,7 +6,6 @@ import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import java.io.Serializable
 import java.time.LocalDateTime
 import java.util.*
 import javax.validation.constraints.NotNull
@@ -41,9 +40,10 @@ data class Post(
     @Version
     @Column(value = "version")
     var version: Long? = null
-) : Serializable {
+) {
     enum class Status {
-        DRAFT, PENDING_MODERATION, PUBLISHED
+        DRAFT,
+        PENDING_MODERATION,
+        PUBLISHED
     }
-
 }

@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS users
     first_name VARCHAR NOT NULL,
     last_name  VARCHAR NOT NULL,
     email      VARCHAR NOT NULL,
+    karma      SMALLINT NOT NULL ,
+    created_at TIMESTAMP NOT NULL ,
     PRIMARY KEY (id)
 );
 
