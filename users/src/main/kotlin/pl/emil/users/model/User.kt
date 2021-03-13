@@ -8,7 +8,7 @@ import java.time.LocalDateTime.*
 import java.util.*
 import javax.validation.constraints.Email
 
-@Table(value = "customers")
+@Table(value = "app_users")
 data class User(
     @Id
     @Column(value = "id")

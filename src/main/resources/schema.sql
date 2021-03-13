@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE IF NOT EXISTS app_users
 (
     id         uuid,
     first_name VARCHAR NOT NULL,

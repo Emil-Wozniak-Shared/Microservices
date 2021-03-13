@@ -1,13 +1,33 @@
 # Getting Started
 
+## Requirement
+
+### Database
+
+- Postgresql
+    - username: `ifzz`
+    - password: `ifzz`
+    - database: `microservice`
+    - port:     `localhost:5432`
+
+**IMPORTANT**
+Execute [schema.sql](src/main/resources/schema.sql) file
+
 ## Endpoints
 
+- **Eureka server**:  http://localhost:8010
+- **Spring Gateway**: http://localhost:8180
+- **Posts endpoint**: http://localhost:8020
+- **Users endpoint**: http://localhost:8040
+
 - error prone
+
 ```bash
 echo '{"title": null ,"content": "validate test 5",  "status": "DRAFT"}' | http POST localhost:8080/api/posts
 ```
 
 - success
+
 ```bash
 echo '{"title": "Test 13","content": "validate test 3",  "status": "DRAFT"}' | http POST localhost:8080/api/posts
 ```
