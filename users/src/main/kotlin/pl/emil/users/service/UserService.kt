@@ -3,7 +3,7 @@ package pl.emil.users.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import pl.emil.users.model.User
-import pl.emil.users.model.UserXMLDTO
+import pl.emil.users.model.UsersXML
 import pl.emil.users.repo.UserRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,11 +16,14 @@ class UserService(private val repository: UserRepository) {
 
     fun all(): Flux<User> = repository.findAll()
 
-    fun allAsXML(): Flux<UserXMLDTO> {
-        val all = repository.findAll()
-        val x = all.map { user -> UserXMLDTO(user) }
-
-        return Flux.from(x)
+    fun allAsXML(): Mono<UsersXML> {
+        val users = repository.findAll()
+        val list = mutableListOf<User>()
+        users.doOnNext {
+            list.add(it)
+        }.subscribe()
+        val xml = UsersXML(list)
+        return Mono.just(xml)
     }
 
     fun one(id: UUID): Mono<User> = repository.findById(id)

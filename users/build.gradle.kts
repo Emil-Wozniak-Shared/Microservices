@@ -40,6 +40,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    implementation("org.junit.jupiter:junit-jupiter:5.4.2")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("net.logstash.logback:logstash-logback-encoder:${properties["LOGBACK_VERSION"]}")
@@ -55,6 +56,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:${properties["JACKSON_VERSION"]}")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${properties["JACKSON_VERSION"]}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${properties["JACKSON_VERSION"]}")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.3")
     implementation("javax.validation:validation-api:2.0.1.Final")
     implementation("javax.servlet:javax.servlet-api:4.0.1")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
@@ -76,6 +78,7 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.glassfish.jaxb:jaxb-runtime")
     runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
+    testImplementation ("com.winterbe:expekt:0.5.0")
 }
 
 dependencyManagement {
