@@ -84,18 +84,6 @@ dependencyManagement {
     }
 }
 
-configurations {
-    all {
-        resolutionStrategy {
-            eachDependency {
-                if (requested.group == "org.codehaus.groovy") {
-                    useVersion("3.0.7")
-                }
-            }
-        }
-    }
-}
-
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")

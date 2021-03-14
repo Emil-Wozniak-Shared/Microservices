@@ -46,7 +46,6 @@ class PostHandler(
             .flatMap {
                 created(URI.create("/posts/${it.id}")).build()
             }
-//            .onErrorResponse()
 
     @Transactional
     override fun update(request: ServerRequest): Mono<ServerResponse> =

@@ -1,13 +1,16 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+DROP TABLE users;
 
-CREATE TABLE IF NOT EXISTS app_users
+CREATE TABLE IF NOT EXISTS users
 (
-    id         uuid,
-    first_name VARCHAR NOT NULL,
-    last_name  VARCHAR NOT NULL,
-    email      VARCHAR NOT NULL,
-    karma      SMALLINT NOT NULL ,
-    created_at TIMESTAMP NOT NULL ,
+    id         UUID DEFAULT uuid_generate_v4(),
+    first_name VARCHAR   NOT NULL,
+    last_name  VARCHAR   NOT NULL,
+    email      VARCHAR   NOT NULL,
+    karma      SMALLINT  NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP,
+    version    INTEGER,
     PRIMARY KEY (id)
 );
 
