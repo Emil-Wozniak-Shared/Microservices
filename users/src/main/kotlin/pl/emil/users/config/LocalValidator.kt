@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean
 import javax.validation.ClockProvider
 
-@Component
+//@Component
 object LocalValidator : LocalValidatorFactoryBean() {
     override fun getClockProvider(): ClockProvider = DefaultClockProvider.INSTANCE
 }

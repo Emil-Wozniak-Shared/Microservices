@@ -21,6 +21,8 @@ allOpen {
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.MappedSuperclass")
     annotation("javax.persistence.Embeddable")
+    annotation("org.springframework.data.relational.core.mapping.Table")
+    annotation("javax.xml.bind.annotation.XmlRootElement")
 }
 
 group = "pl.emil"

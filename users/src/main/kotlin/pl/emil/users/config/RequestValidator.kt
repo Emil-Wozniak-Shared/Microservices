@@ -5,13 +5,12 @@ import org.springframework.validation.Errors
 import org.springframework.validation.SmartValidator
 import org.springframework.validation.ValidationUtils.rejectIfEmptyOrWhitespace
 import org.springframework.validation.annotation.Validated
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter
 
 const val FIELD_REQUIRED = "field.required"
 
 @Component
 @Validated
-class RequestValidator(private val validator: LocalValidator) : SmartValidator {
+class RequestValidator : SmartValidator {
 
     override fun supports(clazz: Class<*>): Boolean = RequestValidator::class.java.isAssignableFrom(clazz)
 
@@ -26,7 +25,7 @@ class RequestValidator(private val validator: LocalValidator) : SmartValidator {
      * Don't use it since it will not handle javax annotations.
      */
     override fun validate(target: Any, errors: Errors) {
-        val validatorAdapter = SpringValidatorAdapter(validator)
-        validatorAdapter.validate(target, errors)
+//        val validatorAdapter = SpringValidatorAdapter(validator)
+//        validatorAdapter.validate(target, errors)
     }
 }

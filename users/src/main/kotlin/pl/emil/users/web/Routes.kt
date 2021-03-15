@@ -12,9 +12,8 @@ class Routes {
     fun routes(
         users: ApiHandler<User>,
     ) = router {
-        "api".nest {
+        "/api".nest {
             "/users".nest {
-
                 "".nest {
                     GET("", users::all)
                     POST("", users::create)
@@ -24,7 +23,6 @@ class Routes {
                     PUT("", users::update)
                     DELETE("", users::delete)
                 }
-
             }
         }
     }

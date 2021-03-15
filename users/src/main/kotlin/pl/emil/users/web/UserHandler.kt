@@ -24,7 +24,7 @@ class UserHandler(
     override fun all(request: ServerRequest): Mono<ServerResponse> {
         val contentType = request.headers().contentType()
         return if (contentType.isPresent && contentType.get() == APPLICATION_XML) {
-            val all = service.allAsXML()
+            val all =  service.allAsXML()
             ok().mediaType(request).body(all)
         } else ok().body(service.all())
     }

@@ -1,35 +1,33 @@
 package pl.emil.users.model
 
 import org.springframework.data.annotation.Id
-import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
+import pl.emil.users.config.LocalDateTimeAdapter
 import java.time.LocalDateTime
 import java.util.*
-import javax.xml.bind.annotation.XmlAccessType.FIELD
-import javax.xml.bind.annotation.XmlAccessorType
-import javax.xml.bind.annotation.XmlAttribute
 import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.annotation.XmlType
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 /**
  * https://www.dariawan.com/tutorials/java/using-jaxb-java-11/
  */
 @Table(value = "users")
-@XmlAccessorType(FIELD)
-//@XmlRootElement(name = "user")
-@XmlType(name="user")
+@XmlRootElement(name = "user")
+@XmlType(
+    name = "user",
+    propOrder = ["id", "firstName", "lastName", "email", "karma", "createdAt", "updatedAt", "version"]
+)
 data class User(
     @Id
     @Column(value = "id")
     var id: UUID? = UUID.randomUUID(),
 
-    @XmlAttribute
     @Column(value = "first_name")
     var firstName: String = "",
 
-    @XmlAttribute
     @Column(value = "last_name")
     var lastName: String = "",
 
@@ -40,10 +38,11 @@ data class User(
     var karma: Short = 80,
 
     @Column(value = "created_at")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter::class)
     var createdAt: LocalDateTime? = null,
 
-    @LastModifiedDate
     @Column(value = "updated_at")
+    @XmlJavaTypeAdapter(LocalDateTimeAdapter::class)
     var updatedAt: LocalDateTime? = null,
 
     @Version

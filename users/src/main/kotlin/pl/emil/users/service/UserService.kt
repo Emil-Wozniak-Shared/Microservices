@@ -8,6 +8,7 @@ import pl.emil.users.repo.UserRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.publisher.Mono.empty
+import reactor.core.scheduler.Schedulers.boundedElastic
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -16,15 +17,14 @@ class UserService(private val repository: UserRepository) {
 
     fun all(): Flux<User> = repository.findAll()
 
-    fun allAsXML(): Mono<UsersXML> {
-        val users = repository.findAll()
-        val list = mutableListOf<User>()
-        users.doOnNext {
-            list.add(it)
-        }.subscribe()
-        val xml = UsersXML(list)
-        return Mono.just(xml)
-    }
+    fun allAsXML(): Mono<UsersXML> = Flux.from(repository.findAll())
+        .publishOn(boundedElastic())
+        .collectList()
+        .let {
+            it.map { e ->
+                UsersXML(e)
+            }
+        }
 
     fun one(id: UUID): Mono<User> = repository.findById(id)
 

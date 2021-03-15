@@ -1,6 +1,5 @@
 package pl.emil.users.config
 
-import org.springframework.http.HttpStatus
 import java.time.LocalDateTime
 
 data class ExceptionResponse(
