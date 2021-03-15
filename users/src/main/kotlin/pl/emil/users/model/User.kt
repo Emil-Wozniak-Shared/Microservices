@@ -39,7 +39,7 @@ data class User(
 
     @Column(value = "created_at")
     @XmlJavaTypeAdapter(LocalDateTimeAdapter::class)
-    var createdAt: LocalDateTime? = null,
+    var createdAt: LocalDateTime? = LocalDateTime.now(),
 
     @Column(value = "updated_at")
     @XmlJavaTypeAdapter(LocalDateTimeAdapter::class)
