@@ -14,20 +14,33 @@ spring:
   devtools:
     restart:
       enabled: true
+
 server:
-  port: 8040
+  port: ${PORT:8040}
+
 eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     allow-redirects: true
     service-url:
       defaultZone: http://localhost:8010/eureka/
     fetch-registry: true
     register-with-eureka: true
+
 management:
-  cloudfoundry:
-    enabled: true
   endpoints:
     enabled-by-default: true
     web:
       exposure:
         include: "*"
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG

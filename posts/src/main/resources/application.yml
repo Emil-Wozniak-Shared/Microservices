@@ -17,6 +17,9 @@ spring:
 server:
   port: 8020
 eureka:
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
   client:
     allow-redirects: true
     service-url:
