@@ -80,7 +80,10 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.glassfish.jaxb:jaxb-runtime")
     runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
-    testImplementation ("com.winterbe:expekt:0.5.0")
+    testImplementation("com.winterbe:expekt:0.5.0")
+
+    implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
+
 }
 
 dependencyManagement {
