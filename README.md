@@ -32,6 +32,14 @@ echo '{"title": null ,"content": "validate test 5",  "status": "DRAFT"}' | http 
 echo '{"title": "Test 13","content": "validate test 3",  "status": "DRAFT"}' | http POST localhost:8080/api/posts
 ```
 
+### Actuator
+
+#### Gateway 
+
+```http request
+GET http://localhost:8180/actuator/gateway/routes
+```
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:

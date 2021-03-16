@@ -9,6 +9,22 @@ spring:
       ribbon:
         enabled: false
     gateway:
+      httpclient:
+        ssl:
+          handshake-timeout: 10000
+          close-notify-flush-timeout: 3000
+          close-notify-read-timeout: 0
+        connect-timeout: 1000
+        response-timeout: 5s
+      x-forwarded:
+        enabled: true
+        for-enabled: true
+        port-append: true
+        port-enabled: true
+        host-append: true
+        host-enabled: true
+      loadbalancer:
+        use404: true
       metrics:
         enabled: true
       discovery:
@@ -20,6 +36,9 @@ spring:
           uri: lb://users
           predicates:
             - Path=/users/**
+          metadata:
+            response-timeout: 200
+            connect-timeout: 200
         - id: posts
           uri: lb://posts
           predicates:
@@ -43,6 +62,9 @@ management:
     web:
       exposure:
         include: "*"
+  endpoint:
+    gateway:
+      enabled: true
 
 logging:
   level:
