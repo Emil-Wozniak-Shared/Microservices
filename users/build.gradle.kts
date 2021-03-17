@@ -87,7 +87,9 @@ dependencies {
     implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
     implementation ("org.modelmapper:modelmapper:2.3.9")
 
-
+    implementation("io.jsonwebtoken:jjwt-api:0.11.1")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.1")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.1")
 }
 
 dependencyManagement {

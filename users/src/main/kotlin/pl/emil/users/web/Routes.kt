@@ -3,8 +3,6 @@ package pl.emil.users.web
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.router
-import pl.emil.users.config.ApiHandler
-import pl.emil.users.model.User
 
 @Configuration
 class Routes {
@@ -15,21 +13,23 @@ class Routes {
         "/api".nest {
             "/users".nest {
                 "".nest {
-                    GET("", users::all)
-                    POST("", users::create)
+                    GET(users::all)
+                    POST(users::create)
                 }
                 "{id}".nest {
-                    GET("", users::getOne)
-                    PUT("", users::update)
-                    DELETE("", users::delete)
+                    GET(users::getOne)
+                    PUT(users::update)
+                    DELETE(users::delete)
+                }
+                "/login".nest {
+                    POST("",users::login)
                 }
             }
-            "/authenticate".nest {
-                GET("/encoder", users::encoder)
-                GET("/hello", users::anonymous)
-                GET("/message", users::message)
-                GET("/users/{username}", users::username)
-            }
+        }
+        "/authenticate".nest {
+            GET("/encoder", users::encoder)
+            GET("/message", users::message)
+            GET("/users/{username}", users::username)
         }
     }
 }

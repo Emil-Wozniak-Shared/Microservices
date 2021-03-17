@@ -15,7 +15,9 @@ import org.springframework.http.MediaType.*
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext
+import org.springframework.web.reactive.function.BodyInserters
 import pl.emil.users.model.User
+import pl.emil.users.model.UserCredentials
 import java.time.Duration.ofMinutes
 import java.time.LocalDateTime
 import java.util.*
@@ -96,4 +98,19 @@ internal class UserHandlerTest {
             .xml(xmlString)
     }
 
+
+    @Test
+    fun `can obtain own user details when logged in`() {
+        client.post()
+            .uri("/api/users/login")
+            .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+            .accept(APPLICATION_JSON)
+            .body(BodyInserters.fromValue(UserCredentials("new@example.com", "pw")))
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .json("{\"message\"}:\"new@example.com\"")
+
+
+    }
 }

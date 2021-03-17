@@ -12,7 +12,5 @@ class ModelConfigurer : ModelMapperConfigurer {
         modelMapper
             .configuration
             .sourceNamingConvention = NONE
-//        modelMapper
-//        .setDestinationNamingConvention(NONE)
     }
 }

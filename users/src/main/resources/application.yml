@@ -47,3 +47,10 @@ logging:
 
 gateway:
   ip: 192.168.2.81
+
+springbootwebfluxjjwt:
+  password:
+    encoder:
+      secret: mysecret
+      iteration: 33
+      keylength: 256
