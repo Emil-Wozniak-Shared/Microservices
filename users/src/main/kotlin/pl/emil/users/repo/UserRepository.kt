@@ -6,5 +6,5 @@ import java.util.*
 
 interface UserRepository : ReactiveCrudRepository<User, UUID> {
 
-    fun findByEmail(email: String): User
+    fun findByEmail(email: String): User?
 }

@@ -2,6 +2,7 @@ package pl.emil.users.service
 
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import pl.emil.users.model.User
@@ -47,6 +48,7 @@ class UserService(private val repository: UserRepository) : UserDetailsService {
 
     override fun loadUserByUsername(username: String): UserDetails =
         with(repository.findByEmail(username)) {
-            SecureUser(this)
+            if (this != null) SecureUser(this)
+            else throw UsernameNotFoundException("User with username: $username not found")
         }
 }

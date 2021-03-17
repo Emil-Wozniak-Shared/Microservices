@@ -6,11 +6,12 @@ DROP TABLE IF EXISTS posts;
 CREATE TABLE IF NOT EXISTS users
 (
     id         UUID DEFAULT uuid_generate_v4(),
-    first_name VARCHAR   NOT NULL,
-    last_name  VARCHAR   NOT NULL,
-    email      VARCHAR   NOT NULL,
-    karma      SMALLINT  NOT NULL,
-    created_at TIMESTAMP NOT NULL,
+    first_name VARCHAR      NOT NULL,
+    last_name  VARCHAR      NOT NULL,
+    password   VARCHAR(500) NOT NULL,
+    email      VARCHAR      NOT NULL,
+    karma      SMALLINT     NOT NULL,
+    created_at TIMESTAMP    NOT NULL,
     updated_at TIMESTAMP,
     version    INTEGER,
     PRIMARY KEY (id)

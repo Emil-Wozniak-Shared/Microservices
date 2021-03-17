@@ -55,49 +55,49 @@ fun passwordEncoder(): PasswordEncoder {
 #### Curl Commands
 
 ```bash
-curl http://localhost:8040/encoder
+curl http://localhost:8040/authenticate/encoder
 ```
 
 returns "class org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" or "Disabled, depending on the bean status.
 
 ```bash
-curl http://localhost:8040/hello
+curl http://localhost:8040/authenticate/hello
 ```
 
 returns "Hello!"
 
 ```bash
-curl -u user:password http://localhost:8040/message
+curl -u user:password http://localhost:8040/authenticate/message
 ```
 
 returns "Hello, user!"
 
 ```bash
-curl -u admin:password http://localhost:8040/message
+curl -u admin:password http://localhost:8040/authenticate/message
 ```
 
 returns "Hello, admin!"
 
 ```bash
-curl -u user:password http://localhost:8040/users/
+curl -u user:password http://localhost:8040/authenticate/users/
 ```
 
 returns the user details for "user"
 
 ```bash
-curl -u user:password http://localhost:8040/users/admin
+curl -u user:password http://localhost:8040/authenticate/users/admin
 ```
 
 returns "Access Denied"
 
 ```bash
-curl -u admin:password http://localhost:8040/users/user
+curl -u admin:password http://localhost:8040/authenticate/users/user
 ```
 
 returns the user details for "user"
 
 ```bash
-curl -u admin:password http://localhost:8040/users/admin
+curl -u admin:password http://localhost:8040/authenticate/users/admin
 ```
 
 returns the user details for "admin"

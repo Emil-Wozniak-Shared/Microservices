@@ -24,10 +24,12 @@ class Routes {
                     DELETE("", users::delete)
                 }
             }
+            "/authenticate".nest {
+                GET("/encoder", users::encoder)
+                GET("/hello", users::anonymous)
+                GET("/message", users::message)
+                GET("/users/{username}", users::username)
+            }
         }
-        GET("/encoder", users::encoder)
-        GET("/hello", users::anonymous)
-        GET("/message", users::message)
-        GET("/users/{username}", users::username)
     }
 }

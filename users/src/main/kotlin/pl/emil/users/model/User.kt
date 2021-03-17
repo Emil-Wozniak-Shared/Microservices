@@ -31,6 +31,9 @@ data class User(
     @Column(value = "last_name")
     var lastName: String = "",
 
+    @Column(value = "password")
+    var password: String = "",
+
     @Column(value = "email")
     var email: String = "",
 
