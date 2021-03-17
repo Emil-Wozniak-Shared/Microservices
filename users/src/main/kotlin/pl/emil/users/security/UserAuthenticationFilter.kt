@@ -4,14 +4,20 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.userdetails.User
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import org.springframework.stereotype.Component
 import pl.emil.users.security.model.SecureUser
+import pl.emil.users.service.UserService
 import java.nio.file.attribute.UserPrincipalNotFoundException
 import javax.servlet.FilterChain
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
-class UserAuthenticationFilter : UsernamePasswordAuthenticationFilter() {
+@Component
+class UserAuthenticationFilter(
+    private val service: UserService
+) : UsernamePasswordAuthenticationFilter() {
     override fun attemptAuthentication(
         request: HttpServletRequest,
         response: HttpServletResponse
@@ -30,8 +36,12 @@ class UserAuthenticationFilter : UsernamePasswordAuthenticationFilter() {
         request: HttpServletRequest,
         response: HttpServletResponse,
         chain: FilterChain,
-        authResult: Authentication?
+        authentication: Authentication
     ) {
-        super.successfulAuthentication(request, response, chain, authResult)
+//        super.successfulAuthentication(request, response, chain, authResult)
+        val username = authentication.credentials().username
+        service.loadUserByUsername(username)
     }
 }
+
+private fun Authentication.credentials() = this.principal as User
