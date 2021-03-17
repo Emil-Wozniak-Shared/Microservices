@@ -40,6 +40,8 @@ extra["springCloudVersion"] = "2020.0.1"
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+
     implementation("org.springframework.data:spring-data-commons")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
@@ -83,6 +85,8 @@ dependencies {
     testImplementation("com.winterbe:expekt:0.5.0")
 
     implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
+    implementation ("org.modelmapper:modelmapper:2.3.9")
+
 
 }
 

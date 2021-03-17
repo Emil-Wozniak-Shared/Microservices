@@ -10,7 +10,7 @@ import pl.emil.users.model.User
 class Routes {
     @Bean(value = ["allRoutes"])
     fun routes(
-        users: ApiHandler<User>,
+        users: UserHandler
     ) = router {
         "/api".nest {
             "/users".nest {
@@ -25,5 +25,9 @@ class Routes {
                 }
             }
         }
+        GET("/encoder", users::encoder)
+        GET("/hello", users::anonymous)
+        GET("/message", users::message)
+        GET("/users/{username}", users::username)
     }
 }

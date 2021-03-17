@@ -40,6 +40,68 @@ echo '{"title": "Test 13","content": "validate test 3",  "status": "DRAFT"}' | h
 GET http://localhost:8180/actuator/gateway/routes
 ```
 
+### User Security
+
+The definition below solved the `PasswordEncoder` problem. See
+[Handler.kt#L19-22](https://github.com/kensiprell/kotlin-spring-security/blob/master/src/main/kotlin/com/siprell/kotlinspringsecurity/SecurityConfiguration.kt#L19-22).
+
+```kotlin
+@Bean
+fun passwordEncoder(): PasswordEncoder {
+    return PasswordEncoderFactories.createDelegatingPasswordEncoder()
+}
+```
+
+#### Curl Commands
+
+```bash
+curl http://localhost:8040/encoder
+```
+
+returns "class org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" or "Disabled, depending on the bean status.
+
+```bash
+curl http://localhost:8040/hello
+```
+
+returns "Hello!"
+
+```bash
+curl -u user:password http://localhost:8040/message
+```
+
+returns "Hello, user!"
+
+```bash
+curl -u admin:password http://localhost:8040/message
+```
+
+returns "Hello, admin!"
+
+```bash
+curl -u user:password http://localhost:8040/users/
+```
+
+returns the user details for "user"
+
+```bash
+curl -u user:password http://localhost:8040/users/admin
+```
+
+returns "Access Denied"
+
+```bash
+curl -u admin:password http://localhost:8040/users/user
+```
+
+returns the user details for "user"
+
+```bash
+curl -u admin:password http://localhost:8040/users/admin
+```
+
+returns the user details for "admin"
+
 ### Reference Documentation
 
 For further reference, please consider the following sections:

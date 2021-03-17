@@ -44,3 +44,6 @@ logging:
     org.springframework.web.reactive: DEBUG
     reactor.ipc.netty: DEBUG
     reactor.netty: DEBUG
+
+gateway:
+  ip: 192.168.2.81

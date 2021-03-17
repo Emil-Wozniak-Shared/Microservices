@@ -12,6 +12,6 @@ class LocalDateTimeAdapter : XmlAdapter<String, LocalDateTime>() {
     override fun marshal(dateTime: LocalDateTime): String =
         dateTime.format(dateFormat)
 
-    override fun unmarshal(dateTime: String?): LocalDateTime =
+    override fun unmarshal(dateTime: String): LocalDateTime =
         LocalDateTime.parse(dateTime, dateFormat)
 }
