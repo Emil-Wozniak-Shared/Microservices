@@ -51,17 +51,4 @@ data class User(
     @Version
     @Column(value = "version")
     var version: Long? = null
-) {
-
-    fun jsonValue(): String =
-        "{" +
-                "\"id\":\"$id\"," +
-                "\"firstName\":\"$firstName\"," +
-                "\"lastName\":\"$lastName\"," +
-                "\"email\":\"$email\"," +
-                "\"karma\":$karma," +
-                "\"createdAt\":\"${createdAt.toString()}\"," +
-                "\"updatedAt\":${updatedAt.toString()}," +
-                "\"version\":$version" +
-                "}"
-}
+)

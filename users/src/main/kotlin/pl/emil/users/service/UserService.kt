@@ -1,8 +1,8 @@
 package pl.emil.users.service
 
 import org.springframework.context.annotation.Lazy
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
@@ -22,7 +22,7 @@ class UserService(
     private val repository: UserRepository,
     @Lazy
     private var encoder: PasswordEncoder
-) : UserDetailsService {
+) : ReactiveUserDetailsService {
 
     fun all(): Flux<User> = repository.findAll()
 
@@ -45,11 +45,10 @@ class UserService(
             repository.save(this)
         }
 
-    override fun loadUserByUsername(username: String): UserDetails =
-        with(repository.findByEmail(username)) {
-            if (this != null) SecureUser(this)
-            else throw UsernameNotFoundException("User with username: $username not found")
-        }
-
-    fun encode(password: String): String = encoder.encode(password)!!
+    override fun findByUsername(username: String): Mono<UserDetails?> {
+       return   repository.findByEmail(username).map {
+           if (it != null) SecureUser(it)
+           else throw UsernameNotFoundException("User with username: $username not found")
+       }
+    }
 }

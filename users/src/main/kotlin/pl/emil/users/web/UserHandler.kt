@@ -3,14 +3,11 @@ package pl.emil.users.web
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_XML
 import org.springframework.http.ResponseCookie.fromClientResponse
-import org.springframework.security.core.Authentication
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import org.springframework.web.reactive.function.server.ServerResponse.*
 import org.springframework.web.reactive.function.server.body
-import org.springframework.web.reactive.function.server.bodyToMono
 import pl.emil.users.config.*
 import pl.emil.users.config.exception.UserCreateException
 import pl.emil.users.model.User
@@ -40,23 +37,29 @@ class UserHandler(
                 noContent().build()
             }
 
+    /**
+     *  [based on](https://medium.com/@jaidenashmore/jwt-authentication-in-spring-boot-webflux-6880c96247c7)
+     */
     fun login(request: ServerRequest): Mono<ServerResponse> =
         request
             .validateBody<UserCredentials>(validator, *credentials)
-            .flatMap {
-                val jwt = signer.createJwt(it.email)
-                val token = fromClientResponse("X-Auth", jwt)
+            .flatMap { service.findByUsername(it.email) }
+            .filter { it != null }
+            .map {
+                fromClientResponse("X-Auth", signer.createJwt(it!!.username))
                     .maxAge(3600)
                     .httpOnly(true)
                     .path("/")
                     .secure(false) // should be true in production
                     .build()
-
+            }
+            .flatMap { token ->
                 noContent()
                     .headers { headers ->
                         headers.add("Set-Cookie", token.toString())
                     }
                     .build()
+
             }
             .switchIfEmpty(status(UNAUTHORIZED).build())
 

@@ -20,18 +20,6 @@ class JwtSigner {
     fun createJwt(userId: String): String {
         val expiredIn = Date.from(now().plus(ofMinutes(15)))
         val issuedAt = Date.from(now())
-        with(builder()) {
-            signWith(keyPair.private, PS512)
-            setSubject(userId)
-            setIssuer(identity)
-            Date.from(now().plus(ofMinutes(15))).apply {
-                setExpiration(this)
-            }
-            Date.from(now()).apply {
-                setIssuedAt(this)
-            }
-            compact()
-        }
         return builder()
             .signWith(keyPair.private, PS512)
             .setSubject(userId)

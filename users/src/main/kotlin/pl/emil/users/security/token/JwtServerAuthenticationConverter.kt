@@ -12,7 +12,10 @@ class JwtServerAuthenticationConverter : ServerAuthenticationConverter {
     override fun convert(exchange: ServerWebExchange): Mono<Authentication> =
         Mono
             .justOrEmpty(exchange)
-            .flatMap { Mono.justOrEmpty(it.request.cookies["X-Auth"]) }
+            .flatMap {
+                val auth = it.request.cookies["X-Auth"]
+                Mono.justOrEmpty(auth)
+            }
             .filter { it.isNotEmpty() }
             .map { it[0].value }
             .map { UsernamePasswordAuthenticationToken(it, it) }
