@@ -14,7 +14,7 @@ class Routes {
             "/login".nest {
                 POST(users::login)
             }
-            "/sign-up".nest {
+            "/signup".nest {
                 POST(users::signUp)
             }
             "/users".nest {
