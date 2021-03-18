@@ -37,7 +37,7 @@ class WebSecurity {
             .csrf().disable()
             .authorizeExchange()
             .pathMatchers("/authenticate/*").permitAll()
-            .pathMatchers("/api/*").permitAll()
+            .pathMatchers("/api/**").permitAll()
             .pathMatchers("/encoder").permitAll()
             .pathMatchers("/hello").permitAll()
             .pathMatchers("/message").hasRole("USER")

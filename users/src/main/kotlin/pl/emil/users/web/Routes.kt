@@ -11,6 +11,9 @@ class Routes {
         users: UserHandler
     ) = router {
         "/api".nest {
+            "/login".nest {
+                POST(users::login)
+            }
             "/users".nest {
                 "".nest {
                     GET(users::all)
@@ -21,15 +24,7 @@ class Routes {
                     PUT(users::update)
                     DELETE(users::delete)
                 }
-                "/login".nest {
-                    POST("",users::login)
-                }
             }
-        }
-        "/authenticate".nest {
-            GET("/encoder", users::encoder)
-            GET("/message", users::message)
-            GET("/users/{username}", users::username)
         }
     }
 }

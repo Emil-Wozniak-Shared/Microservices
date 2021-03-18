@@ -2,7 +2,6 @@ package pl.emil.users.web
 
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_XML
-import org.springframework.http.ResponseCookie
 import org.springframework.http.ResponseCookie.fromClientResponse
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.userdetails.UserDetails
@@ -31,6 +30,35 @@ class UserHandler(
     private val users: MutableMap<String, UserCredentials> = mutableMapOf(
         "email@example.com" to UserCredentials("email@example.com", "pw")
     )
+    private val credentials = arrayOf("email", "password")
+
+    fun signUp(request: ServerRequest): Mono<ServerResponse> =
+        request
+            .validateBody<UserCredentials>(validator, *credentials)
+            .flatMap { user ->
+                users[user.email] = user
+                noContent().build()
+            }
+
+    fun login(request: ServerRequest): Mono<ServerResponse> =
+        request
+            .validateBody<UserCredentials>(validator, *credentials)
+            .flatMap {
+                val jwt = signer.createJwt(it.email)
+                val token = fromClientResponse("X-Auth", jwt)
+                    .maxAge(3600)
+                    .httpOnly(true)
+                    .path("/")
+                    .secure(false) // should be true in production
+                    .build()
+
+                noContent()
+                    .headers { headers ->
+                        headers.add("Set-Cookie", token.toString())
+                    }
+                    .build()
+            }
+            .switchIfEmpty(status(UNAUTHORIZED).build())
 
     override fun all(request: ServerRequest): Mono<ServerResponse> {
         val contentType = request.headers().contentType()
@@ -39,25 +67,6 @@ class UserHandler(
             ok().mediaType(request).body(all)
         } else ok().body(service.all())
     }
-
-    fun login(request: ServerRequest): Mono<ServerResponse> =
-        request
-            .validateBody<UserCredentials>(validator, "email", "password")
-            .flatMap {
-                val jwt = signer.createJwt(it.email)
-                val authCookie = fromClientResponse("X-Auth", jwt)
-                    .maxAge(3600)
-                    .httpOnly(true)
-                    .path("/")
-                    .secure(false) // should be true in production
-                    .build()
-
-                noContent()
-                    .header("Set-Cookie", authCookie.toString())
-                    .build()
-            }
-            .flatMap { noContent().build() }
-            .switchIfEmpty(status(UNAUTHORIZED).build())
 
     override fun getOne(request: ServerRequest): Mono<ServerResponse> =
         service
@@ -73,7 +82,7 @@ class UserHandler(
                 service.create(user).subscribe()
             }
             .flatMap {
-                if (it == null) error(UserCreateException("That user cant't be created"))
+                if (it == null) error(UserCreateException("That user can't be created"))
                 else created(URI.create("/users/${it.id}")).build()
             }
 
@@ -82,27 +91,5 @@ class UserHandler(
 
     override fun delete(request: ServerRequest): Mono<ServerResponse> =
         badRequest().mediaType(request).build()
-
-    fun encoder(request: ServerRequest): Mono<ServerResponse> =
-        request.bodyToMono<String>().flatMap {
-            ok().body(Mono.just(service.encode(it)))
-        }
-
-    fun message(request: ServerRequest): Mono<ServerResponse> =
-        request.principal().flatMap {
-            ok().body(Mono.just("Hello, ${it.name} !"))
-        }
-
-    fun username(request: ServerRequest): Mono<ServerResponse> =
-        ok()
-            .body(request
-                .principal()
-                .map { p ->
-                    UserDetails::class.java.cast(
-                        Authentication::class.java.cast(p)
-                            .principal
-                    )
-                }
-            )
 
 }

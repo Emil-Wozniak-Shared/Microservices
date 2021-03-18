@@ -15,9 +15,12 @@ import org.springframework.http.MediaType.*
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.WebTestClient.bindToApplicationContext
+import org.springframework.test.web.reactive.server.body
 import org.springframework.web.reactive.function.BodyInserters
 import pl.emil.users.model.User
 import pl.emil.users.model.UserCredentials
+import pl.emil.users.model.UsersXML
+import reactor.core.publisher.Mono
 import java.time.Duration.ofMinutes
 import java.time.LocalDateTime
 import java.util.*
@@ -31,26 +34,6 @@ internal class UserHandlerTest {
     private val URL = "/api/users"
 
     private val mapper: ObjectMapper = ObjectMapper()
-
-    private val user1 = User(
-        id = UUID.fromString("7088ad19-43dd-4e4f-9309-629577a26c6f"),
-        firstName = "Emil",
-        lastName = "Woźniak",
-        email = "e.wozniak@gmail.com",
-        karma = 80,
-        createdAt = LocalDateTime.parse("2021-03-14T10:43:03.460834"),
-        version = 0
-    )
-    private val user2 = User(
-        id = UUID.fromString("f8002219-fa1f-4928-9bbf-4e13a4a91f4f"),
-        firstName = "Adrian",
-        lastName = "Woźniak",
-        email = "a.wozniak@gmail.com",
-        karma = 80,
-        createdAt = LocalDateTime.parse("2021-03-14T12:38:17.008058"),
-        version = 0
-    )
-    private val users = listOf(user1, user2)
 
     @Autowired
     private lateinit var context: ApplicationContext
@@ -77,40 +60,39 @@ internal class UserHandlerTest {
 
     @Test
     fun `get all with content type JSON should be list`() {
-        val message = users.joinToString(prefix = "[", postfix = "]") { it.jsonValue() }
         client.get()
             .uri(URL)
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .accept(APPLICATION_JSON)
-            .exchange().expectBody()
-            .json(message)
+            .exchange()
+            .expectBody(List::class.java)
     }
 
     @Test
     fun `get all with content type XML should be list`() {
-        val xmlString = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><users><users/></users>"
         client.get()
             .uri(URL)
             .header(CONTENT_TYPE, APPLICATION_XML_VALUE)
             .accept(APPLICATION_XML)
             .exchange()
-            .expectBody()
-            .xml(xmlString)
-    }
+            .expectBody(UsersXML::class.java)
 
+    }
 
     @Test
     fun `can obtain own user details when logged in`() {
         client.post()
-            .uri("/api/users/login")
+            .uri("/api/login")
             .header(CONTENT_TYPE, APPLICATION_JSON_VALUE)
             .accept(APPLICATION_JSON)
-            .body(BodyInserters.fromValue(UserCredentials("new@example.com", "pw")))
+            .body<UserCredentials>(Mono.just(UserCredentials("new@example.com", "pw")))
             .exchange()
-            .expectStatus().isOk
+            .expectStatus().isNoContent
+            .expectHeader().exists("Set-Cookie")
+            .expectHeader().valueMatches("Set-Cookie","X-Auth.*; Path=/; Max-Age=3600; Expires=.*; HttpOnly")
             .expectBody()
-            .json("{\"message\"}:\"new@example.com\"")
-
-
+            .consumeWith {
+                println(it)
+            }
     }
 }

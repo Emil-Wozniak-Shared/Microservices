@@ -2,36 +2,51 @@ package pl.emil.users.security.token
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.SignatureAlgorithm
+import io.jsonwebtoken.Jwts.builder
+import io.jsonwebtoken.Jwts.parserBuilder
+import io.jsonwebtoken.SignatureAlgorithm.PS512
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import java.security.KeyPair
-import java.time.Duration
-import java.time.Instant
-import java.util.Date
+import java.time.Duration.ofMinutes
+import java.time.Instant.now
+import java.util.*
 
 @Service
 class JwtSigner {
-    val keyPair: KeyPair = Keys.keyPairFor(SignatureAlgorithm.RS256)
+    val keyPair: KeyPair = Keys.keyPairFor(PS512)
+    private val identity = "identity"
 
     fun createJwt(userId: String): String {
-        return Jwts.builder()
-            .signWith(keyPair.private, SignatureAlgorithm.RS256)
+        val expiredIn = Date.from(now().plus(ofMinutes(15)))
+        val issuedAt = Date.from(now())
+        with(builder()) {
+            signWith(keyPair.private, PS512)
+            setSubject(userId)
+            setIssuer(identity)
+            Date.from(now().plus(ofMinutes(15))).apply {
+                setExpiration(this)
+            }
+            Date.from(now()).apply {
+                setIssuedAt(this)
+            }
+            compact()
+        }
+        return builder()
+            .signWith(keyPair.private, PS512)
             .setSubject(userId)
-            .setIssuer("identity")
-            .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(15))))
-            .setIssuedAt(Date.from(Instant.now()))
+            .setIssuer(identity)
+            .setExpiration(expiredIn)
+            .setIssuedAt(issuedAt)
             .compact()
     }
 
     /**
      * Validate the JWT where it will throw an exception if it isn't valid.
      */
-    fun validateJwt(jwt: String): Jws<Claims> {
-        return Jwts.parserBuilder()
+    fun validateJwt(jwt: String): Jws<Claims> =
+        parserBuilder()
             .setSigningKey(keyPair.public)
             .build()
             .parseClaimsJws(jwt)
-    }
 }
