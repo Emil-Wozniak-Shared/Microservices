@@ -2,7 +2,7 @@ package pl.emil.users.security.token
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jws
-import io.jsonwebtoken.Jwts.builder
+import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Jwts.parserBuilder
 import io.jsonwebtoken.SignatureAlgorithm.PS512
 import io.jsonwebtoken.security.Keys
@@ -17,17 +17,16 @@ class JwtSigner {
     val keyPair: KeyPair = Keys.keyPairFor(PS512)
     private val identity = "identity"
 
-    fun createJwt(userId: String): String {
-        val expiredIn = Date.from(now().plus(ofMinutes(15)))
-        val issuedAt = Date.from(now())
-        return builder()
-            .signWith(keyPair.private, PS512)
-            .setSubject(userId)
-            .setIssuer(identity)
-            .setExpiration(expiredIn)
-            .setIssuedAt(issuedAt)
-            .compact()
-    }
+    fun createJwt(userId: String): String =
+        with(Jwts.builder()) {
+            val expiredIn = Date.from(now().plus(ofMinutes(15)))
+            val issuedAt = Date.from(now())
+            signWith(keyPair.private, PS512)
+            setSubject(userId)
+            setIssuer(identity)
+            setExpiration(expiredIn)
+            setIssuedAt(issuedAt)
+        }.compact()
 
     /**
      * Validate the JWT where it will throw an exception if it isn't valid.

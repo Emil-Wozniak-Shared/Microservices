@@ -2,6 +2,7 @@ package pl.emil.users.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod.POST
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -30,6 +31,7 @@ class WebSecurity {
         return http
             .csrf().disable()
             .authorizeExchange()
+            .pathMatchers(POST, "/api/users").permitAll()
             .pathMatchers("/api/signup").permitAll()
             .pathMatchers("/api/login").permitAll()
             .pathMatchers("/api/**").authenticated()
