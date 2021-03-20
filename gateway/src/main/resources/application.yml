@@ -36,6 +36,9 @@ spring:
           uri: lb://users
           predicates:
             - Path=/users/**
+            - Header=Authorization, Bearer (.*)
+          filters:
+            - AuthorizationCookieFilter
           metadata:
             response-timeout: 200
             connect-timeout: 200
@@ -65,6 +68,9 @@ management:
   endpoint:
     gateway:
       enabled: true
+
+token:
+  secret: 1B9AD76A538D8CC864166965DCEF7
 
 logging:
   level:

@@ -31,6 +31,18 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+
+    implementation("io.jsonwebtoken:jjwt-api:0.11.1")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.1")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.1")
+
+    implementation("javax.validation:validation-api:2.0.1.Final")
+    implementation("javax.servlet:javax.servlet-api:4.0.1")
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("javax.persistence:javax.persistence-api:2.2")
+    implementation("javax.xml.bind:jaxb-api")
+    implementation("org.glassfish.jaxb:jaxb-runtime")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
 }
 
 dependencyManagement {

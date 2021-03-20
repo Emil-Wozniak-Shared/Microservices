@@ -61,10 +61,6 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${properties["JACKSON_VERSION"]}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${properties["JACKSON_VERSION"]}")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.3")
-    implementation("javax.validation:validation-api:2.0.1.Final")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
-    implementation("javax.persistence:javax.persistence-api:2.2")
 
     runtimeOnly("org.postgresql:postgresql")
     implementation("com.vladmihalcea:hibernate-types-52:2.1.1")
@@ -79,6 +75,10 @@ dependencies {
     implementation("io.r2dbc:r2dbc-spi:0.9.0.M1")
     implementation("io.r2dbc:r2dbc-postgresql:0.8.6.RELEASE")
 
+    implementation("javax.validation:validation-api:2.0.1.Final")
+    implementation("javax.servlet:javax.servlet-api:4.0.1")
+    implementation("javax.annotation:javax.annotation-api:1.3.2")
+    implementation("javax.persistence:javax.persistence-api:2.2")
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.glassfish.jaxb:jaxb-runtime")
     runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
