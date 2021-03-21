@@ -43,6 +43,8 @@ dependencies {
     implementation("javax.xml.bind:jaxb-api")
     implementation("org.glassfish.jaxb:jaxb-runtime")
     runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
+
+//    implementation("org.springframework.security:spring-security-oauth2-jose")
 }
 
 dependencyManagement {

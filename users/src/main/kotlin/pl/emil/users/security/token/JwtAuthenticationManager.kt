@@ -8,10 +8,10 @@ import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
 @Component
-class JwtAuthenticationManager(private val jwtSigner: JwtSigner) : ReactiveAuthenticationManager {
-    override fun authenticate(authentication: Authentication): Mono<Authentication> {
-        return Mono.just(authentication)
-            .map { jwtSigner.validateJwt(it.credentials as String) }
+class JwtAuthenticationManager(private val signer: JwtSigner) : ReactiveAuthenticationManager {
+    override fun authenticate(authentication: Authentication): Mono<Authentication> =
+        Mono.just(authentication)
+            .map { signer.validateJwt(it.credentials as String) }
             .onErrorResume { Mono.empty() }
             .map { jws ->
                 UsernamePasswordAuthenticationToken(
@@ -20,5 +20,4 @@ class JwtAuthenticationManager(private val jwtSigner: JwtSigner) : ReactiveAuthe
                     mutableListOf(SimpleGrantedAuthority("ROLE_USER"))
                 )
             }
-    }
 }

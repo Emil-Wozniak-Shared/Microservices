@@ -2,37 +2,29 @@ package pl.emil.gateway.config
 
 import io.jsonwebtoken.Jwts
 import org.springframework.cloud.gateway.filter.GatewayFilter
-import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
+import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.core.env.Environment
-import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
-import pl.emil.gateway.config.AuthorizationCookieFilter.Config
+import reactor.core.publisher.Mono
 
 @Component
 class AuthorizationCookieFilter(
     private val environment: Environment
-) : AbstractGatewayFilterFactory<Config>() {
-    private val noXAuthMsg = "No X-Auth Cookie"
-    private val noXAuthBodyMsg ="No X-Auth body"
+) : GatewayFilter {
 
-    inner class Config
-
-    override fun apply(config: Config): GatewayFilter =
-        GatewayFilter { exchange, chain ->
-            val request = exchange.request
-            val cookies = request.cookies
-            cookies.let { cookie ->
-                if (cookie.containsKey(X_AUTH)) {
-                    onError(exchange, noXAuthMsg, UNAUTHORIZED)
-                } else cookie[X_AUTH]!![0]!!.value.let { jwt ->
-                    if (jwt.isNotValid()) {
-                        onError(exchange, noXAuthBodyMsg, UNAUTHORIZED)
-                    }
-                }
+    override fun filter(
+        exchange: ServerWebExchange,
+        chain: GatewayFilterChain
+    ): Mono<Void> =
+        exchange.run {
+            if (request.cookies.containsKey(X_AUTH)) onError(exchange)
+            request.cookies[X_AUTH]?.get(0)?.value?.let {
+                if (it.isNotValid()) onError(this)
+                else chain.filter(this)
             }
-            chain.filter(exchange)
+            chain.filter(this)
         }
 
     /**
@@ -40,20 +32,18 @@ class AuthorizationCookieFilter(
      * @return false if body subject is not null or not empty,
      * otherwise true
      */
+    @Suppress("DEPRECATION")
     private fun String.isNotValid(): Boolean =
-        Jwts.parserBuilder()
+        !Jwts
+            .parser()
             .setSigningKey(environment.getProperty("token.secret"))
-            .build()
-            .parseClaimsJws(this).body.subject.isNullOrBlank()
+            .parseClaimsJws(this)
+            .body.subject
+            .isNullOrEmpty()
 
-    private fun onError(
-        exchange: ServerWebExchange,
-        message: String,
-        status: HttpStatus
-    ) {
+    private fun onError(exchange: ServerWebExchange) {
         exchange.response.apply {
-            statusCode = status
-            setComplete()
-        }
+            statusCode = UNAUTHORIZED
+        }.setComplete()
     }
 }

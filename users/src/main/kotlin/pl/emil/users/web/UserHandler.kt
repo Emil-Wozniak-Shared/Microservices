@@ -37,9 +37,6 @@ class UserHandler(
                 noContent().build()
             }
 
-    /**
-     *  [based on](https://medium.com/@jaidenashmore/jwt-authentication-in-spring-boot-webflux-6880c96247c7)
-     */
     fun login(request: ServerRequest): Mono<ServerResponse> =
         request
             .validateBody<UserCredentials>(validator, *credentials)
