@@ -12,9 +12,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories.crea
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import pl.emil.users.repo.BearerServerSecurityContextRepository
-import pl.emil.users.security.CorsFilter
-import pl.emil.users.security.JWTWebFilter
-import pl.emil.users.security.JwtAuthenticationProvider
+import pl.emil.users.security.filter.CorsFilter
+import pl.emil.users.security.filter.JWTWebFilter
+import pl.emil.users.security.token.JwtAuthenticationProvider
 import pl.emil.users.security.token.JwtSigner
 
 @Configuration

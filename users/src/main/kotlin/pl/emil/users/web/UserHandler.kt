@@ -27,23 +27,12 @@ class UserHandler(
     private val signer: JwtSigner
 ) : ApiHandler<User> {
 
-    private val users: MutableMap<String, UserCredentials> = mutableMapOf(
-        "email@example.com" to UserCredentials("email@example.com", "pw")
-    )
     private val credentials = arrayOf("email", "password")
 
     fun token(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(Login::class.java)
             .flatMap { login ->
                 ok().bodyValue(Token(signer.createJwt(login.username), 7200))
-            }
-
-    fun signUp(request: ServerRequest): Mono<ServerResponse> =
-        request
-            .validateBody<UserCredentials>(validator, *credentials)
-            .flatMap { user ->
-                users[user.email] = user
-                noContent().build()
             }
 
     fun login(request: ServerRequest): Mono<ServerResponse> =

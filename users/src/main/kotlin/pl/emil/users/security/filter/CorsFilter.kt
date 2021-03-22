@@ -1,30 +1,11 @@
-package pl.emil.users.security
+package pl.emil.users.security.filter
 
 import org.springframework.http.HttpMethod
-import org.springframework.http.HttpMethod.OPTIONS
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatus.NO_CONTENT
-import org.springframework.security.authentication.ReactiveAuthenticationManager
-import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
-
-class JWTWebFilter(
-    private val authenticationManager: ReactiveAuthenticationManager
-) : WebFilter {
-    override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
-        return ReactiveSecurityContextHolder.getContext()
-            .flatMap { securityContext ->
-                this.authenticationManager.authenticate(securityContext.authentication)
-                    .map { securityContext.authentication = it }
-                    .map { exchange }
-            }
-            .defaultIfEmpty(exchange)
-            .flatMap { chain.filter(it) }
-    }
-}
 
 class CorsFilter : WebFilter {
     override fun filter(ctx: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
@@ -33,10 +14,10 @@ class CorsFilter : WebFilter {
             add("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS")
             add("Access-Control-Allow-Headers", HEADERS)
         }
-        return if (ctx.request.method == OPTIONS) {
+        return if (ctx.request.method == HttpMethod.OPTIONS) {
             ctx.response.apply {
                 headers.add("Access-Control-Max-Age", "1728000")
-                statusCode = NO_CONTENT
+                statusCode = HttpStatus.NO_CONTENT
             }
             Mono.empty()
         } else {
