@@ -54,8 +54,4 @@ class UserService(
             else throw UsernameNotFoundException("User with username: $username not found")
         }
     }
-
-    @Bean
-    fun mapReactiveUserDetailsService(): MapReactiveUserDetailsService =
-        MapReactiveUserDetailsService()
 }

@@ -10,6 +10,9 @@ class Routes {
     fun routes(
         users: UserHandler
     ) = router {
+        "/oauth/token".nest {
+            POST(users::token)
+        }
         "/api".nest {
             "/login".nest {
                 POST(users::login)

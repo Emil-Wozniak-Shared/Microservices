@@ -1,6 +1,7 @@
 package pl.emil.gateway.config
 
 import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.security.Keys
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.GatewayFilterChain
 import org.springframework.core.env.Environment
@@ -13,6 +14,8 @@ import reactor.core.publisher.Mono
 class AuthorizationCookieFilter(
     private val environment: Environment
 ) : GatewayFilter {
+
+    private val key = Keys.hmacShaKeyFor(environment.getProperty("token.secret")!!.toByteArray())
 
     override fun filter(
         exchange: ServerWebExchange,
@@ -34,9 +37,9 @@ class AuthorizationCookieFilter(
      */
     @Suppress("DEPRECATION")
     private fun String.isNotValid(): Boolean =
-        !Jwts
-            .parser()
-            .setSigningKey(environment.getProperty("token.secret"))
+        !Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
             .parseClaimsJws(this)
             .body.subject
             .isNullOrEmpty()

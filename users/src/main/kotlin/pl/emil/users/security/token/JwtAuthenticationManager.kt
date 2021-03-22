@@ -7,7 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
-@Component
+//@Component
 class JwtAuthenticationManager(private val signer: JwtSigner) : ReactiveAuthenticationManager {
     override fun authenticate(authentication: Authentication): Mono<Authentication> =
         Mono.just(authentication)

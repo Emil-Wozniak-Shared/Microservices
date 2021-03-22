@@ -1,5 +1,6 @@
 package pl.emil.users.security
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.ReactiveSecurityContextHolder
 import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextImpl
@@ -18,7 +19,7 @@ class SecurityContextRepository : ServerSecurityContextRepository {
     override fun load(serverWebExchange: ServerWebExchange): Mono<SecurityContext> =
         ReactiveSecurityContextHolder.getContext().map {
             with(it.authentication) {
-                JwtAuthenticationToken(principal, credentials, authorities)
+                UsernamePasswordAuthenticationToken(principal, credentials, authorities)
                 SecurityContextImpl(this)
             }
         }

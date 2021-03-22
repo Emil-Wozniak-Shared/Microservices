@@ -17,6 +17,9 @@ import pl.emil.users.service.UserService
 import reactor.core.publisher.Mono
 import java.net.URI
 
+data class Login(val username: String)
+data class Token(val token: String, val expiresIn: Int)
+
 @Service
 class UserHandler(
     private val service: UserService,
@@ -28,6 +31,12 @@ class UserHandler(
         "email@example.com" to UserCredentials("email@example.com", "pw")
     )
     private val credentials = arrayOf("email", "password")
+
+    fun token(request: ServerRequest): Mono<ServerResponse> =
+        request.bodyToMono(Login::class.java)
+            .flatMap { login ->
+                ok().bodyValue(Token(signer.createJwt(login.username), 7200))
+            }
 
     fun signUp(request: ServerRequest): Mono<ServerResponse> =
         request
