@@ -8,7 +8,8 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class SpringCloudConfig(
-    private val cookieFilter: AuthorizationCookieFilter
+    private val factory: CookieFilterFactory,
+    private val config: ConfigProps
 ) {
 
     @Bean
@@ -16,15 +17,13 @@ class SpringCloudConfig(
         route(id = "users", uri = "lb://users") {
             path("/users/api/login")
             path("/users/api/users")
-//                .filters {
-//                it.filter(cookieFilter)
-//            }
+                .and()
+                .filters {
+                    filter(factory.apply(config))
+                }
         }
         route(id = "posts", uri = "lb://posts") {
             host("localhost") and path("/posts/**")
-            filters {
-                cookieFilter
-            }
         }
     }
 }

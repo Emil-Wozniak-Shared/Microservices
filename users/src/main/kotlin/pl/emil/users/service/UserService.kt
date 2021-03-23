@@ -1,8 +1,6 @@
 package pl.emil.users.service
 
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Lazy
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -18,7 +16,6 @@ import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers.boundedElastic
 import java.time.LocalDateTime
 import java.util.*
-
 
 @Service
 class UserService(
@@ -54,8 +51,4 @@ class UserService(
             else throw UsernameNotFoundException("User with username: $username not found")
         }
     }
-
-    @Bean
-    fun mapReactiveUserDetailsService(): MapReactiveUserDetailsService =
-        MapReactiveUserDetailsService()
 }

@@ -20,10 +20,7 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 @Configuration
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
-class WebSecurity(
-    private val authenticationManager: ReactiveAuthenticationManager,
-    private val securityContextRepository: ServerSecurityContextRepository
-) {
+class WebSecurity(private val securityContextRepository: ServerSecurityContextRepository) {
 
     @Bean
     fun security(
