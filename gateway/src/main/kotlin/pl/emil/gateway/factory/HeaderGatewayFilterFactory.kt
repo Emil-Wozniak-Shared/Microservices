@@ -1,4 +1,4 @@
-package pl.emil.gateway.config
+package pl.emil.gateway.factory
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
@@ -10,7 +10,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.stereotype.Component
-import pl.emil.gateway.factory.LoggingGatewayFilterFactory
+import pl.emil.gateway.config.unauthorized
 import reactor.core.publisher.Mono
 
 @Component
@@ -19,7 +19,7 @@ class HeaderGatewayFilterFactory(
 ) : AbstractGatewayFilterFactory<HeaderGatewayFilterFactory.HeaderConfig>(HeaderConfig::class.java) {
 
     private val key = Keys.hmacShaKeyFor(environment.getProperty("token.secret")!!.toByteArray())
-    private val logger: Logger = LoggerFactory.getLogger(LoggingGatewayFilterFactory::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun apply(config: HeaderConfig): GatewayFilter =
         OrderedGatewayFilter({ exchange, chain ->
