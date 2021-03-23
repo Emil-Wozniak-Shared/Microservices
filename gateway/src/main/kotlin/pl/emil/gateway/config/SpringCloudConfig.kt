@@ -5,26 +5,38 @@ import org.springframework.cloud.gateway.route.builder.filters
 import org.springframework.cloud.gateway.route.builder.routes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import pl.emil.gateway.config.HeaderGatewayFilterFactory.HeaderConfig
+import pl.emil.gateway.factory.LoggingGatewayFilterFactory
+import pl.emil.gateway.factory.LoggingGatewayFilterFactory.Config
 
 @Configuration
-class SpringCloudConfig(
-    private val cookieFilter: AuthorizationCookieFilter
-) {
+class SpringCloudConfig {
 
     @Bean
-    fun additionalRouteLocator(builder: RouteLocatorBuilder) = builder.routes {
+    fun additionalRouteLocator(
+        builder: RouteLocatorBuilder,
+        loggingFactory: LoggingGatewayFilterFactory,
+        headerFactory: HeaderGatewayFilterFactory
+    ) = builder.routes {
         route(id = "users", uri = "lb://users") {
-            path("/users/api/login")
-            path("/users/api/users")
-//                .filters {
-//                it.filter(cookieFilter)
-//            }
+            path("/users/**")
+                .and()
+                .filters {
+                    rewritePath("/users(?<segment>/?.*)", "$\\{segment}")
+                        .filter(loggingFactory.apply(Config("Users entered")))
+                        .filter(headerFactory.apply(HeaderConfig("api")))
+                }
         }
         route(id = "posts", uri = "lb://posts") {
             host("localhost") and path("/posts/**")
-            filters {
-                cookieFilter
-            }
+        }
+        route(id = "service_route_java_config") {
+            path("/service/**")
+                .filters { f ->
+                    f.rewritePath("/service(?<segment>/?.*)", "$\\{segment}")
+                        .filter(loggingFactory.apply(Config("My Custom Message", true, true)))
+                }
+                .uri("http://localhost:8081")
         }
     }
 }

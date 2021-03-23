@@ -5,43 +5,22 @@ spring:
   application:
     name: gateway
   cloud:
-    loadbalancer:
-      ribbon:
-        enabled: false
     gateway:
-      httpclient:
-        ssl:
-          handshake-timeout: 10000
-          close-notify-flush-timeout: 3000
-          close-notify-read-timeout: 0
-        connect-timeout: 1000
-        response-timeout: 5s
-      x-forwarded:
-        enabled: true
-        for-enabled: true
-        port-append: true
-        port-enabled: true
-        host-append: true
-        host-enabled: true
-      loadbalancer:
-        use404: true
-      metrics:
-        enabled: true
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
-      routes:
-        - id: users
-          uri: lb://users
-          predicates:
-            - Path=/users/**
-          filters:
-            - CookieFilterFactory
-        - id: posts
-          uri: lb://posts
-          predicates:
-            - Path=/posts/**
+#      routes:
+#        - id: users
+#          uri: lb://users
+#          predicates:
+#            - Path=/users/**
+#          filters:
+#            - CookieFilterFactory
+#        - id: posts
+#          uri: lb://posts
+#          predicates:
+#            - Path=/posts/**
 
 eureka:
   instance:
@@ -75,3 +54,7 @@ logging:
 
 token:
   secret: v4iPLN5On9ySdcfqPs89qKUQzW1Loi6LVxyOd+kMsxgb333OsZ0S3ttTt++3iYJZPDKkl3ISLH7xapkNeevKVR6ugtAEYVWdzRcCyoaPKvx3NaPWdusr2jF19xG9Zd8IRQsuAEA0m3rxVYmpJ19Irbod2pRYGxPrJ/F4sPNb8lIsdpbRCO6rFjNVLxgINzCYUTx5h44TMHmcHVOA9wkruOQ2DtNQHZEeouXaUQ==%
+
+app:
+  token:
+    secret: 2
