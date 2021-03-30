@@ -3,7 +3,7 @@ package pl.emil.users.repo
 
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.context.SecurityContextHolder.createEmptyContext
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.server.context.ServerSecurityContextRepository
 import org.springframework.web.server.ServerWebExchange
@@ -14,15 +14,13 @@ class BearerServerSecurityContextRepository : ServerSecurityContextRepository {
     override fun save(exchange: ServerWebExchange, context: SecurityContext?): Mono<Void> =
         Mono.empty()
 
-    override fun load(exchange: ServerWebExchange): Mono<SecurityContext> {
-       with(SecurityContextHolder.createEmptyContext()) {
-           val token = tokenFromRequest(exchange.request)
-           token ?: return Mono.empty()
-           val authentication = PreAuthenticatedAuthenticationToken(token, token)
-           this.authentication = authentication
-           return Mono.just(this)
-       }
-    }
+    override fun load(exchange: ServerWebExchange): Mono<SecurityContext> =
+        with(createEmptyContext()) {
+            tokenFromRequest(exchange.request)?.let { token ->
+                this.authentication = PreAuthenticatedAuthenticationToken(token, token)
+                Mono.just(this)
+            } ?: Mono.empty()
+        }
 
     private fun tokenFromRequest(request: ServerHttpRequest): String? {
         if (request.headers["Authorization"] == null) return null
