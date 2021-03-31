@@ -1,44 +1,78 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS comments;
-DROP TABLE IF EXISTS posts;
+BEGIN;
+DO
+$do$
+    BEGIN
+        IF EXISTS(SELECT 1 FROM pg_extension WHERE extname liKE 'uuid-ossp') THEN
+            RAISE NOTICE 'uuid-ossp already exists';
+        ELSE
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        END IF;
 
-CREATE TABLE IF NOT EXISTS users
-(
-    id         UUID DEFAULT uuid_generate_v4(),
-    first_name VARCHAR      NOT NULL,
-    last_name  VARCHAR      NOT NULL,
-    password   VARCHAR(500) NOT NULL,
-    email      VARCHAR      NOT NULL,
-    karma      SMALLINT     NOT NULL,
-    created_at TIMESTAMP    NOT NULL,
-    updated_at TIMESTAMP,
-    version    INTEGER,
-    PRIMARY KEY (id)
-);
+        CREATE OR REPLACE FUNCTION public.CREATE_IF_NOT_EXIST(
+            name varchar,
+            columns varchar,
+            isTimestamp boolean = false
+        )
+            RETURNS void
+            language plpgsql
+        AS
+        $$
+        BEGIN
+            IF EXISTS(select 1 from pg_tables where tablename = name) THEN
+                RAISE NOTICE 'ALREADY EXISTS: %', name;
+            ELSE
+                RAISE NOTICE 'Create table: %', name;
+                IF isTimestamp THEN
+                    EXECUTE format(
+                                        'CREATE TABLE IF NOT EXISTS ' || name ||
+                                        ' (
+                                        id UUID DEFAULT uuid_generate_v1(), ' ||
+                                        columns || ',
+                                        created_at TIMESTAMP NOT NULL,
+                                        updated_at TIMESTAMP,
+                                        version INTEGER, PRIMARY KEY (id)
+                                        );');
+                ELSE
+                    EXECUTE format(
+                                        'CREATE TABLE IF NOT EXISTS ' || name ||
+                                        ' (
+                                        id UUID DEFAULT uuid_generate_v1(), ' ||
+                                        columns || ',
+                                        version INTEGER, PRIMARY KEY (id)
+                                        );');
+                END IF;
+            END IF;
+        END ;
+        $$;
 
-CREATE TABLE IF NOT EXISTS posts
-(
-    -- id SERIAL PRIMARY KEY,
-    id         UUID         DEFAULT uuid_generate_v4(),
-    title      VARCHAR(255),
-    content    VARCHAR(255),
-    metadata   JSON         default '{}',
-    -- In this sample, use Varchar to store enum(name), Spring Data R2dbc can convert Java Enum to pg VARCHAR, and reverse.
-    status     VARCHAR(255) default 'DRAFT',
-    created_at TIMESTAMP, --NOT NULL DEFAULT LOCALTIMESTAMP,
-    updated_at TIMESTAMP,
-    version    INTEGER,
-    PRIMARY KEY (id)
-);
+        PERFORM CREATE_IF_NOT_EXIST(
+                name := 'users',
+                columns := '
+                               first_name VARCHAR NOT NULL,
+                               last_name VARCHAR NOT NULL,
+                               password VARCHAR(500) NOT NULL,
+                               email VARCHAR NOT NULL,
+                               karma SMALLINT NOT NULL',
+                isTimestamp := true
+            );
 
-CREATE TABLE IF NOT EXISTS comments
-(
-    id         UUID DEFAULT uuid_generate_v4(),
-    content    VARCHAR(255),
-    post_id    UUID REFERENCES posts ON DELETE CASCADE,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    version    INTEGER,
-    PRIMARY KEY (id)
-);
+        PERFORM CREATE_IF_NOT_EXIST(
+                name := 'posts',
+                columns := '
+                               title VARCHAR(255),
+                               content VARCHAR(255), metadata JSON default ''{}'',
+                               status VARCHAR(255) ',
+                isTimestamp := true
+            );
+
+        PERFORM CREATE_IF_NOT_EXIST(
+                name := 'comments',
+                columns := '
+                               content VARCHAR(255),
+                               post_id UUID REFERENCES posts ON DELETE CASCADE',
+                isTimestamp := true
+            );
+
+    END
+$do$;
+COMMIT

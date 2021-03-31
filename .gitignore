@@ -90,3 +90,6 @@ build/
 # End of https://www.toptal.com/developers/gitignore/api/java,java-web,intellij
 
 .gradle/
+
+# Spring Config Source
+MicroserviceConfigServer/
