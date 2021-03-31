@@ -6,7 +6,9 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/Emil-Wozniak/MicroserviceConfigServer
           clone-on-start: true
+          uri: https://github.com/EmilConfig/MicroserviceConfigServer
+          username: emil.wozniak.2020@gmail.com
+          password: ya4haV09CAfD
 server:
   port: 8182

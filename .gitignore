@@ -92,4 +92,4 @@ build/
 .gradle/
 
 # Spring Config Source
-MicroserviceConfigServer/
+configserver/MicroserviceConfigServer/
