@@ -8,7 +8,7 @@ spring:
         git:
           clone-on-start: true
           uri: https://github.com/EmilConfig/MicroserviceConfigServer
-          username: emil.wozniak.2020@gmail.com
+          username: EmilConfig
           password: ya4haV09CAfD
 server:
   port: 8182
