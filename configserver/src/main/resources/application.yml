@@ -1,14 +1,29 @@
-
 spring:
   application:
-    name: ConfigServer
+    name: configserver
   cloud:
     config:
       server:
         git:
+          timeout: 4
+          skipSslValidation: true
           clone-on-start: true
           uri: https://github.com/EmilConfig/MicroserviceConfigServer
           username: EmilConfig
           password: ya4haV09CAfD
+          force-pull: true
+  rabbitmq:
+    host: localhost
+    username: guest
+    password: guest
+    port: 5672
 server:
   port: 8182
+management:
+  endpoint:
+    metrics:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh

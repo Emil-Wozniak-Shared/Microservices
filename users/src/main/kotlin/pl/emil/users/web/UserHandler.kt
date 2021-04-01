@@ -1,5 +1,6 @@
 package pl.emil.users.web
 
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_XML
 import org.springframework.http.ResponseCookie.fromClientResponse
@@ -24,7 +25,8 @@ data class Token(val token: String, val expiresIn: Int)
 class UserHandler(
     private val service: UserService,
     private val validator: RequestValidator,
-    private val signer: JwtSigner
+    private val signer: JwtSigner,
+    private val env: Environment
 ) : ApiHandler<User> {
 
     private val credentials = arrayOf("email", "password")
@@ -32,21 +34,32 @@ class UserHandler(
     fun token(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(Login::class.java)
             .flatMap { login ->
-                ok().bodyValue(Token(signer.createJwt(login.username), 7200))
+                ok().bodyValue(
+                    Token(
+                        signer.createJwt(login.username),
+                        env.getProperty("token.expiration_time")?.toInt() ?: 7200
+                    )
+                )
             }
 
+    @Deprecated(
+        "method creates is not valid token",
+        ReplaceWith("pl.emil.users.web.UserHandler.token")
+    )
     fun login(request: ServerRequest): Mono<ServerResponse> =
         request
             .validateBody<UserCredentials>(validator, *credentials)
             .flatMap { service.findByUsername(it.email) }
             .filter { it != null }
             .map {
-                fromClientResponse("X-Auth", signer.createJwt(it!!.username))
-                    .maxAge(3600)
-                    .httpOnly(true)
-                    .path("/")
-                    .secure(false) // should be true in production
-                    .build()
+                it?.let {
+                    fromClientResponse("X-Auth", signer.createJwt(it.username))
+                        .maxAge(env.getProperty("token.expiration_time")?.toLong() ?: 7200)
+                        .httpOnly(true)
+                        .path("/")
+                        .secure(false) // should be true in production
+                        .build()
+                }
             }
             .flatMap { token ->
                 noContent()

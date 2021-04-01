@@ -2,6 +2,7 @@ package pl.emil.users.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod.POST
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
@@ -35,6 +36,7 @@ class WebSecurity(
         http.authorizeExchange()
             .pathMatchers("/actuator/**").permitAll()
             .pathMatchers("/oauth/token").permitAll()
+            .pathMatchers(POST, "/api/users").permitAll()
             .anyExchange().authenticated()
 
         http.httpBasic().disable()
@@ -48,30 +50,6 @@ class WebSecurity(
     @Bean
     fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =
         JwtAuthenticationProvider(signer)
-
-//
-//        @Bean
-//    fun security(
-//        http: ServerHttpSecurity,
-//        jwtAuthenticationManager: ReactiveAuthenticationManager,
-//        jwtAuthenticationConverter: ServerAuthenticationConverter
-//    ): SecurityWebFilterChain = http
-//        .csrf().disable()
-//        .authorizeExchange()
-//        .pathMatchers(POST, "/api/users").permitAll()
-//        .pathMatchers("/api/signup").permitAll()
-//        .pathMatchers("/api/login").permitAll()
-//        .pathMatchers("/api/**").permitAll()
-//        .and()
-//        .addFilterAt(
-//            AuthenticationWebFilter(jwtAuthenticationManager).apply {
-//                setServerAuthenticationConverter(jwtAuthenticationConverter)
-//            }, AUTHENTICATION
-//        )
-//        .httpBasic().disable()
-//        .formLogin().disable()
-//        .logout().disable()
-//        .build()
 
     @Bean
     fun passwordEncoder(): PasswordEncoder = createDelegatingPasswordEncoder()
