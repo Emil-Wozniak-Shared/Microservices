@@ -39,7 +39,7 @@ extra["JACKSON_VERSION"] = "2.12.2"
 extra["springCloudVersion"] = "2020.0.1"
 
 dependencies {
-    implementation("org.springframework.cloud:spring-cloud-bus")
+    implementation("org.springframework.cloud:spring-cloud-starter-bus-amqp")
 
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("org.springframework.boot:spring-boot-starter-validation")

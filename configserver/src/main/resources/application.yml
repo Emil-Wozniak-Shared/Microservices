@@ -12,18 +12,29 @@ spring:
           username: EmilConfig
           password: ya4haV09CAfD
           force-pull: true
+    bus:
+      enabled: true
+      refresh:
+        enabled: true
   rabbitmq:
     host: localhost
     username: guest
     password: guest
     port: 5672
+
 server:
   port: 8182
+
 management:
   endpoint:
-    metrics:
-      enabled: true
+    health:
+      show-details: always
+      show-components: always
   endpoints:
+    enabled-by-default: true
     web:
+      cors:
+        allowed-methods: OPTIONS, GET, POST
       exposure:
-        include: bus-refresh
+        include: ["bus-refresh", "health"]
+      base-path: "/management"
