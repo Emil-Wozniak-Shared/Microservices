@@ -10,12 +10,13 @@ class Routes {
     fun routes(
         users: UserHandler
     ) = router {
+        //https://github.com/dmendezg/jwt-spring-webflux
+        "/oauth/token".nest {
+            POST(users::token)
+        }
         "/api".nest {
             "/login".nest {
                 POST(users::login)
-            }
-            "/signup".nest {
-                POST(users::signUp)
             }
             "/users".nest {
                 "".nest {

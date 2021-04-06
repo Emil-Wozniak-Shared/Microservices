@@ -5,25 +5,36 @@ import org.springframework.cloud.gateway.route.builder.filters
 import org.springframework.cloud.gateway.route.builder.routes
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import pl.emil.gateway.factory.HeaderGatewayFilterFactory
+import pl.emil.gateway.factory.HeaderGatewayFilterFactory.HeaderConfig
 
 @Configuration
-class SpringCloudConfig(
-    private val factory: CookieFilterFactory,
-    private val config: ConfigProps
-) {
+class SpringCloudConfig {
 
     @Bean
-    fun additionalRouteLocator(builder: RouteLocatorBuilder) = builder.routes {
+    fun additionalRouteLocator(
+        builder: RouteLocatorBuilder,
+        headerFactory: HeaderGatewayFilterFactory
+    ) = builder.routes {
         route(id = "users", uri = "lb://users") {
-            path("/users/api/login")
-            path("/users/api/users")
+            path("/users/**")
                 .and()
                 .filters {
-                    filter(factory.apply(config))
+                    rewritePath("/users(?<segment>/?.*)", "$\\{segment}")
+                        .filter(headerFactory.apply(HeaderConfig("api")))
                 }
         }
         route(id = "posts", uri = "lb://posts") {
             host("localhost") and path("/posts/**")
+        }
+        route(id = "service_route_java_config", uri = "http://localhost:8081") {
+            path("/service/**")
+                .and()
+                .filters {
+                    rewritePath("/users(?<segment>/?.*)", "$\\{segment}")
+                        .filter(headerFactory.apply(HeaderConfig("api")))
+                }
+
         }
     }
 }
