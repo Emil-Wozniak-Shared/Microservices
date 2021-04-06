@@ -1,7 +1,6 @@
 spring:
-  application:
-    name: users
-
+  config:
+    import: discovery.yml
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -12,11 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  rabbitmq:
-    host: localhost
-    username: guest
-    password: guest
-    port: 5672
   devtools:
     restart:
       enabled: true
@@ -24,24 +18,18 @@ spring:
 server:
   port: ${PORT:8040}
 
-eureka:
-  instance:
-    prefer-ip-address: true
-    hostname: localhost
-    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-  client:
-    allow-redirects: true
-    service-url:
-      defaultZone: http://localhost:8010/eureka/
-    fetch-registry: true
-    register-with-eureka: true
-
 management:
   endpoints:
     enabled-by-default: true
     web:
       exposure:
-        include: "*"
+        include: '*'
+      cors:
+        allowed-methods: '*'
+        allowed-origins: '*'
+  endpoint:
+    refresh:
+      enabled: true
 
 logging:
   level:
@@ -51,9 +39,5 @@ logging:
     reactor.ipc.netty: DEBUG
     reactor.netty: DEBUG
 
-gateway:
-  ip: 192.168.2.81
-
-token:
-  expiration_time: 740000
-  secret: v4iPLN5On9ySdcfqPs89qKUQzW1Loi6LVxyOd+kMsxgb333OsZ0S3ttTt++3iYJZPDKkl3ISLH7xapkNeevKVR6ugtAEYVWdzRcCyoaPKvx3NaPWdusr2jF19xG9Zd8IRQsuAEA0m3rxVYmpJ19Irbod2pRYGxPrJ/F4sPNb8lIsdpbRCO6rFjNVLxgINzCYUTx5h44TMHmcHVOA9wkruOQ2DtNQHZEeouXaUQ==%
+token.expiration_time: 740000
+token.secret: v4iPLN5On9ySdcfqPs89qKUQzW1Loi6LVxyOd+kMsxgb333OsZ0S3ttTt++3iYJZPDKkl3ISLH7xapkNeevKVR6ugtAEYVWdzRcCyoaPKvx3NaPWdusr2jF19xG9Zd8IRQsuAEA0m3rxVYmpJ19Irbod2pRYGxPrJ/F4sPNb8lIsdpbRCO6rFjNVLxgINzCYUTx5h44TMHmcHVOA9wkruOQ2DtNQHZEeouXaUQ==%

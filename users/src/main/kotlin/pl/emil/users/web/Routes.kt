@@ -1,16 +1,25 @@
 package pl.emil.users.web
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.router
 
 @Configuration
-class Routes {
+class Routes(
+    @Value("\${token.expiration_time}")
+    private val exp: String
+) {
+
     @Bean(value = ["allRoutes"])
     fun routes(
         users: UserHandler
     ) = router {
-        //https://github.com/dmendezg/jwt-spring-webflux
+        "/yml".nest {
+            GET("", ) {
+                ok().bodyValue(exp)
+            }
+        }
         "/oauth/token".nest {
             POST(users::token)
         }

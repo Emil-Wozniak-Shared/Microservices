@@ -1,5 +1,5 @@
 spring:
   cloud:
     config:
-      uri: http://localhost:8182
+      uri: http://localhost:8182/users/default
       name: users

@@ -34,6 +34,7 @@ class WebSecurity(
         http.securityContextRepository(BearerServerSecurityContextRepository())
 
         http.authorizeExchange()
+            .pathMatchers("/yml").permitAll()
             .pathMatchers("/actuator/**").permitAll()
             .pathMatchers("/oauth/token").permitAll()
             .pathMatchers(POST, "/api/users").permitAll()

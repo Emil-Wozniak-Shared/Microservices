@@ -54,53 +54,25 @@ fun passwordEncoder(): PasswordEncoder {
 
 #### Curl Commands
 
+##### Refresh user service
 ```bash
-curl http://localhost:8040/authenticate/encoder
+curl localhost:8040/actuator/refresh -d {} -H "Content-Type: application/json"
 ```
 
-returns "class org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" or "Disabled, depending on the bean status.
+##### Request token
+Request body contains json with **username** which is required User object email value.
 
-```bash
-curl http://localhost:8040/authenticate/hello
+```http request
+POST /users/oauth/token HTTP/1.1
+Host: localhost:8180
+Content-Type: application/json
+cache-control: no-cache
+Postman-Token: c5349ea2-2d8d-4519-b67a-2d6f25f97be0
+{
+  "username": "e.wozniak@ifzz.pl"
+}------WebKitFormBoundary7MA4YWxkTrZu0gW--
 ```
 
-returns "Hello!"
-
-```bash
-curl -u user:password http://localhost:8040/authenticate/message
-```
-
-returns "Hello, user!"
-
-```bash
-curl -u admin:password http://localhost:8040/authenticate/message
-```
-
-returns "Hello, admin!"
-
-```bash
-curl -u user:password http://localhost:8040/authenticate/users/
-```
-
-returns the user details for "user"
-
-```bash
-curl -u user:password http://localhost:8040/authenticate/users/admin
-```
-
-returns "Access Denied"
-
-```bash
-curl -u admin:password http://localhost:8040/authenticate/users/user
-```
-
-returns the user details for "user"
-
-```bash
-curl -u admin:password http://localhost:8040/authenticate/users/admin
-```
-
-returns the user details for "admin"
 
 ### Reference Documentation
 
