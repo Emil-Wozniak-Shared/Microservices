@@ -54,9 +54,40 @@ fun passwordEncoder(): PasswordEncoder {
 
 #### Curl Commands
 
+##### Request token
+
+```bash
+curl -X POST \
+  http://localhost:8180/users/oauth/token \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache' \
+  -d '{ "username": "John" }'
+```
+
+
+##### Request Users
+
+```bash
+curl -X GET \
+  http://localhost:8180/users/api/users/ \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'cache-control: no-cache'
+```
+
 ##### Refresh user service
 ```bash
 curl localhost:8040/actuator/refresh -d {} -H "Content-Type: application/json"
+```
+
+##### Request all users through Gateway
+
+```bash
+curl -X GET \
+  http://localhost:8180/users/api/users/ \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -H 'cache-control: no-cache'
 ```
 
 ##### Request token
@@ -67,7 +98,6 @@ POST /users/oauth/token HTTP/1.1
 Host: localhost:8180
 Content-Type: application/json
 cache-control: no-cache
-Postman-Token: c5349ea2-2d8d-4519-b67a-2d6f25f97be0
 {
   "username": "e.wozniak@ifzz.pl"
 }------WebKitFormBoundary7MA4YWxkTrZu0gW--
