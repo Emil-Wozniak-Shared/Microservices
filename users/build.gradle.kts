@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
@@ -13,6 +14,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.4.30"
     kotlin("plugin.spring") version "1.4.30"
+    id("io.kotest") version "0.3.8"
 }
 
 apply(plugin = "org.jetbrains.kotlin.plugin.spring")
@@ -34,65 +36,77 @@ repositories {
 }
 
 extra["LOGBACK_VERSION"] = "6.4"
-extra["JACKSON_VERSION"] = "2.12.2"
 extra["springCloudVersion"] = "2020.0.1"
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.cloud:spring-cloud-starter-config")
+fun DependencyHandlerScope.kotest(target: String, module: String = "",  version: String = "4.6.3") = this.testImplementation("io.kotest${if(module.isBlank()) module else "-"}:kotest-$target:$version")
+fun DependencyHandlerScope.jackson(target: String, module: String = "core", version: String = "2.12.2") = this.implementation("com.fasterxml.jackson.${module}:jackson-$target:${version}")
+fun DependencyHandlerScope.jsonwebtoken(target: String, version: String = "0.11.1") = this.runtimeOnly("io.jsonwebtoken:jjwt-${target}:$version")
+fun DependencyHandlerScope.javax(module: String, target: String, version: String = "4.0.1") = this.implementation("javax.$module:$target:$version")
+fun DependencyHandlerScope.spring(module: String, target: String) = this.implementation("org.springframework.$module:spring-$module-$target")
+fun DependencyHandlerScope.jetbrains(module: String, target: String) = this.implementation("org.jetbrains.${module}:${module}-${target}")
+fun DependencyHandlerScope.r2dbc(target: String, version: String) = this.implementation("io.r2dbc:r2dbc-${target}:${version}")
 
-    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-    implementation("org.springframework.data:spring-data-commons")
-    implementation("org.springframework.boot:spring-boot-starter-actuator")
+dependencies {
+    spring("data", "commons")
+    spring("boot", "devtools")
+    spring("boot", "starter-actuator")
+    spring("boot", "starter-webflux")
+    spring("boot", "starter-validation")
+    spring("boot", "starter-security")
+    spring("boot", "starter-data-r2dbc")
+    spring("cloud", "starter-config")
+    spring("cloud", "starter-netflix-eureka-client")
+
+    jetbrains("kotlin", "reflect")
+    jetbrains("kotlin", "stdlib-jdk8")
+    jetbrains("kotlinx", "coroutines-reactor")
+
+    javax("validation", "validation-api", "2.0.1.Final")
+    javax("servlet", "javax.servlet-api", "4.0.1")
+    javax("annotation", "javax.annotation-api", "1.3.2")
+    javax("persistence", "javax.persistence-api", "2.2")
+    javax("xml.bind", "jaxb-api", "2.3.1")
 
     implementation("net.logstash.logback:logstash-logback-encoder:${properties["LOGBACK_VERSION"]}")
-
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
 
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    jackson("core")
+    jackson("databind")
+    jackson("annotations")
+    jackson("dataformat-xml", "dataformat")
+    jackson("module-kotlin", "module")
+    jackson("datatype-jsr310", "datatype", "2.11.3")
 
-    implementation("com.fasterxml.jackson.core:jackson-core:${properties["JACKSON_VERSION"]}")
-    implementation("com.fasterxml.jackson.core:jackson-databind:${properties["JACKSON_VERSION"]}")
-    implementation("com.fasterxml.jackson.core:jackson-annotations:${properties["JACKSON_VERSION"]}")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${properties["JACKSON_VERSION"]}")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:${properties["JACKSON_VERSION"]}")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.3")
-
-    runtimeOnly("org.postgresql:postgresql")
     implementation("com.vladmihalcea:hibernate-types-52:2.1.1")
 
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    testImplementation("io.projectreactor:reactor-test")
-    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
-    testImplementation("io.projectreactor:reactor-test")
-    implementation("io.r2dbc:r2dbc-spi:0.9.0.M1")
-    implementation("io.r2dbc:r2dbc-postgresql:0.8.6.RELEASE")
+    r2dbc("spi", "0.9.0.M1")
+    r2dbc("postgresql", "0.8.6.RELEASE")
 
-    implementation("javax.validation:validation-api:2.0.1.Final")
-    implementation("javax.servlet:javax.servlet-api:4.0.1")
-    implementation("javax.annotation:javax.annotation-api:1.3.2")
-    implementation("javax.persistence:javax.persistence-api:2.2")
-    implementation("javax.xml.bind:jaxb-api")
     implementation("org.glassfish.jaxb:jaxb-runtime")
-    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
-    testImplementation("com.winterbe:expekt:0.5.0")
-
     implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
-    implementation ("org.modelmapper:modelmapper:2.3.9")
-
+    implementation("org.modelmapper:modelmapper:2.3.9")
     implementation("io.jsonwebtoken:jjwt-api:0.11.1")
-    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.1")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.1")
+
+    jsonwebtoken("impl")
+    jsonwebtoken("jackson")
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
+
+    testImplementation("com.winterbe:expekt:0.5.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+    kotest("assertions-core-jvm")
+    kotest("assertions-core")
+    kotest("property")
+    kotest("framework-engine-jvm")
+    kotest("runner-junit5")
+    kotest("runner-junit5")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.0.1")
+    testImplementation("io.mockk:mockk:1.12.0")
 }
 
 dependencyManagement {
@@ -110,4 +124,8 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+    testLogging {
+        events = setOf(STARTED, PASSED, FAILED)
+        showStandardStreams = true
+    }
 }

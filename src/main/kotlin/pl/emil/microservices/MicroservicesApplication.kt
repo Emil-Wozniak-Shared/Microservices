@@ -12,5 +12,4 @@ class MicroservicesApplication
 
 fun main(args: Array<String>) {
     runApplication<MicroservicesApplication>(*args)
-
 }
