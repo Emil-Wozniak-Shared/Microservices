@@ -20,20 +20,18 @@ import reactor.core.publisher.Mono
 class GlobalErrorWebExceptionHandler(
     attributes: GlobalErrorAttributes,
     context: ApplicationContext,
-    codecConfigurer: ServerCodecConfigurer
+    codecConfigurer: ServerCodecConfigurer,
 ) : AbstractErrorWebExceptionHandler(attributes, Resources(), context) {
 
     override fun getErrorAttributes(request: ServerRequest, options: ErrorAttributeOptions):
             MutableMap<String, Any> = super.getErrorAttributes(request, options)
 
-    override fun getRoutingFunction(attributes: ErrorAttributes):
-            RouterFunction<ServerResponse> = route(all())
-    { renderErrorResponse(it, attributes as GlobalErrorAttributes) }
+    override fun getRoutingFunction(attributes: ErrorAttributes): RouterFunction<ServerResponse> = route(all()) {
+        renderErrorResponse(it, attributes as GlobalErrorAttributes)
+    }
 
-    private fun renderErrorResponse(
-        request: ServerRequest,
-        attributes: GlobalErrorAttributes
-    ): Mono<ServerResponse> = attributes.getErrorResponse(request)
+    private fun renderErrorResponse(request: ServerRequest, attributes: GlobalErrorAttributes ): Mono<ServerResponse> =
+        attributes.getErrorResponse(request)
 
     init {
         super.setMessageWriters(codecConfigurer.writers)

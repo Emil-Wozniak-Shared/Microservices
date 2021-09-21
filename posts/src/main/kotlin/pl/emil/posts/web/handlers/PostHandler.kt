@@ -18,7 +18,7 @@ import java.time.LocalDateTime.now
 @Component
 class PostHandler(
     private val posts: PostRepository,
-    private val validator: RequestValidator
+    private val validator: RequestValidator,
 ) : ApiHandler<Post> {
     override fun all(request: ServerRequest): Mono<ServerResponse> =
         ok().body(this.posts.findAll())
@@ -40,8 +40,7 @@ class PostHandler(
         request
             .validateBody<Post>(validator, "title", "content")
             .doOnNext { post ->
-                post.createdAt = now()
-                this.posts.save(post).subscribe()
+                this.posts.save(post.apply { createdAt = now() }).subscribe()
             }
             .flatMap {
                 created(URI.create("/posts/${it.id}")).build()
@@ -52,13 +51,13 @@ class PostHandler(
         Mono
             .zip(
                 { data: Array<Any> ->
-                    val p: Post = data[0] as Post
-                    val p2: Post = data[1] as Post
-                    p.title = p2.title
-                    p.content = p2.content
-                    p.metadata = p2.metadata
-                    p.status = p2.status
-                    p
+                    (data[0] as Post).let { post ->
+                        val (_, title, content, metadata, status) = data[1] as Post
+                        post.title = title
+                        post.content = content
+                        post.metadata = metadata
+                        post.status = status
+                    }
                 },
                 this.posts.findById(request.id()),
                 request.bodyToMono(Post::class.java)
@@ -67,8 +66,7 @@ class PostHandler(
             .flatMap<Any>(this.posts::save)
             .flatMap { noContent().build() }
             .onErrorResume {
-                val response = ExceptionResponse(it.message, it.toString())
-                badRequest().body(Mono.just(response))
+                badRequest().body(createExceptionResponse(it))
             }
 
     override fun delete(request: ServerRequest): Mono<ServerResponse> =
@@ -79,4 +77,7 @@ class PostHandler(
                 badRequest().body<String>(Mono.just(it.message!!))
             }
 
+    private fun createExceptionResponse(it: Throwable): Mono<ExceptionResponse> {
+        return Mono.just(ExceptionResponse(it.message, it.toString()))
+    }
 }

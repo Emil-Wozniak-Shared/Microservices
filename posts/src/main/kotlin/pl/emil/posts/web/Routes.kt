@@ -12,28 +12,26 @@ import pl.emil.posts.web.handlers.ApiHandler
 @Configuration
 class Routes {
     @Bean(value = ["allRoutes"])
-    fun routes(
-        posts: ApiHandler<Post>,
-        comments: ApiHandler<Comment>
-    ) = router {
-        "api".nest {
-            "/posts".nest {
-                accept(APPLICATION_JSON, APPLICATION_XML).nest {
-                    "".nest {
-                        GET("", posts::all)
-                        POST("", posts::create)
-                    }
-                    "{id}".nest {
-                        GET("", posts::getOne)
-                        PUT("", posts::update)
-                        DELETE("", posts::delete)
-                    }
-                    "comments".nest {
-                        GET("", comments::getOne)
-                        POST("", comments::create)
+    fun routes(posts: ApiHandler<Post>, comments: ApiHandler<Comment>) =
+        router {
+            "api".nest {
+                "/posts".nest {
+                    accept(APPLICATION_JSON, APPLICATION_XML).nest {
+                        "".nest {
+                            GET("", posts::all)
+                            POST("", posts::create)
+                        }
+                        "{id}".nest {
+                            GET("", posts::getOne)
+                            PUT("", posts::update)
+                            DELETE("", posts::delete)
+                        }
+                        "comments".nest {
+                            GET("", comments::getOne)
+                            POST("", comments::create)
+                        }
                     }
                 }
             }
         }
-    }
 }

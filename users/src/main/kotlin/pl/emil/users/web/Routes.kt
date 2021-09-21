@@ -8,7 +8,7 @@ import org.springframework.web.reactive.function.server.router
 @Configuration
 class Routes(
     @Value("\${token.expiration_time}")
-    private val exp: String
+    private val expiration: String
 ) {
 
     @Bean(value = ["allRoutes"])
@@ -16,8 +16,8 @@ class Routes(
         users: UserHandler
     ) = router {
         "/yml".nest {
-            GET("", ) {
-                ok().bodyValue(exp)
+            GET("" ) {
+                ok().bodyValue(expiration)
             }
         }
         "/oauth/token".nest {
