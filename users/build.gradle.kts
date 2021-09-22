@@ -35,16 +35,43 @@ repositories {
     mavenCentral()
 }
 
-extra["LOGBACK_VERSION"] = "6.4"
 extra["springCloudVersion"] = "2020.0.1"
 
-fun DependencyHandlerScope.kotest(target: String, module: String = "",  version: String = "4.6.3") = this.testImplementation("io.kotest${if(module.isBlank()) module else "-"}:kotest-$target:$version")
-fun DependencyHandlerScope.jackson(target: String, module: String = "core", version: String = "2.12.2") = this.implementation("com.fasterxml.jackson.${module}:jackson-$target:${version}")
-fun DependencyHandlerScope.jsonwebtoken(target: String, version: String = "0.11.1") = this.runtimeOnly("io.jsonwebtoken:jjwt-${target}:$version")
-fun DependencyHandlerScope.javax(module: String, target: String, version: String = "4.0.1") = this.implementation("javax.$module:$target:$version")
-fun DependencyHandlerScope.spring(module: String, target: String) = this.implementation("org.springframework.$module:spring-$module-$target")
-fun DependencyHandlerScope.jetbrains(module: String, target: String) = this.implementation("org.jetbrains.${module}:${module}-${target}")
-fun DependencyHandlerScope.r2dbc(target: String, version: String) = this.implementation("io.r2dbc:r2dbc-${target}:${version}")
+fun DependencyHandlerScope.kotest(
+    target: String,
+    module: String = "",
+    version: String = "4.6.3",
+    extension: Boolean = false
+): Dependency? =
+    this.testImplementation(
+        "io.kotest${
+            when {
+                extension -> ".extensions"
+                module.isBlank() -> ""
+                else -> ".$module"
+            }
+        }:kotest-${if (extension) "extensions-$target" else target}:$version"
+    )
+
+fun DependencyHandlerScope.jackson(target: String, module: String = "core", version: String = "2.12.2") =
+    this.implementation("com.fasterxml.jackson.${module}:jackson-$target:${version}")
+
+fun DependencyHandlerScope.jsonwebtoken(target: String, version: String = "0.11.1", runtime: Boolean = true): Dependency? =
+    if(runtime) this.runtimeOnly("io.jsonwebtoken:jjwt-${target}:$version")
+    else this.implementation("io.jsonwebtoken:jjwt-${target}:$version")
+
+fun DependencyHandlerScope.javax(module: String, target: String, version: String = "4.0.1") =
+    this.implementation("javax.$module:$target:$version")
+
+fun DependencyHandlerScope.spring(module: String, target: String) =
+    this.implementation("org.springframework.$module:spring-$module-$target")
+
+fun DependencyHandlerScope.jetbrains(module: String, target: String) =
+    this.implementation("org.jetbrains.${module}:${module}-${target}")
+
+fun DependencyHandlerScope.r2dbc(target: String, version: String, runtime: Boolean = false) =
+   if (runtime) this.runtimeOnly("io.r2dbc:r2dbc-${target}:${version}")
+   else this.implementation("io.r2dbc:r2dbc-${target}:${version}")
 
 dependencies {
     spring("data", "commons")
@@ -67,10 +94,9 @@ dependencies {
     javax("persistence", "javax.persistence-api", "2.2")
     javax("xml.bind", "jaxb-api", "2.3.1")
 
-    implementation("net.logstash.logback:logstash-logback-encoder:${properties["LOGBACK_VERSION"]}")
+    implementation("net.logstash.logback:logstash-logback-encoder:6.4")
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
 
-//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     jackson("core")
     jackson("databind")
     jackson("annotations")
@@ -81,16 +107,16 @@ dependencies {
     implementation("com.vladmihalcea:hibernate-types-52:2.1.1")
 
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
-    runtimeOnly("io.r2dbc:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
+    r2dbc("postgresql", "0.8.8.RELEASE", runtime = true)
     r2dbc("spi", "0.9.0.M1")
     r2dbc("postgresql", "0.8.6.RELEASE")
 
     implementation("org.glassfish.jaxb:jaxb-runtime")
     implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
     implementation("org.modelmapper:modelmapper:2.3.9")
-    implementation("io.jsonwebtoken:jjwt-api:0.11.1")
 
+    jsonwebtoken("api", runtime = false)
     jsonwebtoken("impl")
     jsonwebtoken("jackson")
     runtimeOnly("org.postgresql:postgresql")
@@ -105,7 +131,9 @@ dependencies {
     kotest("framework-engine-jvm")
     kotest("runner-junit5")
     kotest("runner-junit5")
-    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.0.1")
+    kotest("testcontainers", version = "1.0.1", extension = true)
+    kotest("spring", version = "1.0.1", extension = true)
+
     testImplementation("io.mockk:mockk:1.12.0")
 }
 
