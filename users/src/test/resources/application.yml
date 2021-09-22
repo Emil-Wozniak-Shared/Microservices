@@ -1,0 +1,43 @@
+spring:
+  config:
+    import: discovery.yml
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/microservice
+    username: ifzz
+    password: ifzz
+  jpa:
+    hibernate:
+      ddl-auto: update
+  devtools:
+    restart:
+      enabled: true
+
+server:
+  port: ${PORT:8040}
+
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
+      cors:
+        allowed-methods: '*'
+        allowed-origins: '*'
+  endpoint:
+    refresh:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    reactor.netty: DEBUG
+
+token.expiration_time: 740000
+token.secret: v4iPLN5On9ySdcfqPs89qKUQzW1Loi6LVxyOd+kMsxgb333OsZ0S3ttTt++3iYJZPDKkl3ISLH7xapkNeevKVR6ugtAEYVWdzRcCyoaPKvx3NaPWdusr2jF19xG9Zd8IRQsuAEA0m3rxVYmpJ19Irbod2pRYGxPrJ/F4sPNb8lIsdpbRCO6rFjNVLxgINzCYUTx5h44TMHmcHVOA9wkruOQ2DtNQHZEeouXaUQ==%

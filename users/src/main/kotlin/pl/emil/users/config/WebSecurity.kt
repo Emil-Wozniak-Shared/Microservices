@@ -28,25 +28,23 @@ class WebSecurity(
     @Bean
     fun springWebFilterChain(
         http: ServerHttpSecurity, authenticationManager: ReactiveAuthenticationManager
-    ): SecurityWebFilterChain {
-        http.addFilterAt(CorsFilter(), FIRST)
-        http.addFilterAt(JWTWebFilter(authenticationManager), AUTHENTICATION)
-        http.securityContextRepository(BearerServerSecurityContextRepository())
-
-        http.authorizeExchange()
-            .pathMatchers("/yml").permitAll()
-            .pathMatchers("/actuator/**").permitAll()
-            .pathMatchers("/oauth/token").permitAll()
-            .pathMatchers(POST, "/api/users").permitAll()
-            .anyExchange().authenticated()
-
-        http.httpBasic().disable()
-            .formLogin().disable()
-            .csrf().disable()
-            .logout().disable()
-
-        return http.build()
-    }
+    ): SecurityWebFilterChain = http
+        .apply {
+            addFilterAt(CorsFilter(), FIRST)
+            addFilterAt(JWTWebFilter(authenticationManager), AUTHENTICATION)
+            securityContextRepository(BearerServerSecurityContextRepository())
+            authorizeExchange()
+                .pathMatchers("/yml").permitAll()
+                .pathMatchers("/actuator/**").permitAll()
+                .pathMatchers("/oauth/token").permitAll()
+                .pathMatchers(POST, "/api/users").permitAll()
+                .anyExchange().authenticated()
+            httpBasic().disable()
+                .formLogin().disable()
+                .csrf().disable()
+                .logout().disable()
+        }
+        .build()
 
     @Bean
     fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =

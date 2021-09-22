@@ -29,11 +29,7 @@ class UserService(
     fun allAsXML(): Mono<UsersXML> = Flux.from(repository.findAll())
         .publishOn(boundedElastic())
         .collectList()
-        .let {
-            it.map { e ->
-                UsersXML(e)
-            }
-        }
+        .let { users -> users.map { xml -> UsersXML(xml) } }
 
     fun one(id: UUID): Mono<User> = repository.findById(id)
 

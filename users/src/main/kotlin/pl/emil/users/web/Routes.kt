@@ -6,17 +6,14 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.server.router
 
 @Configuration
-class Routes(
-    @Value("\${token.expiration_time}")
-    private val expiration: String
-) {
+class Routes(@Value("\${token.expiration_time}") private val expiration: String) {
 
     @Bean(value = ["allRoutes"])
     fun routes(
         users: UserHandler
     ) = router {
         "/yml".nest {
-            GET("" ) {
+            GET("") {
                 ok().bodyValue(expiration)
             }
         }

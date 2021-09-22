@@ -130,11 +130,14 @@ dependencies {
     kotest("property")
     kotest("framework-engine-jvm")
     kotest("runner-junit5")
-    kotest("runner-junit5")
     kotest("testcontainers", version = "1.0.1", extension = true)
     kotest("spring", version = "1.0.1", extension = true)
 
     testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation ("org.testcontainers:postgresql:1.16.0")
+    testImplementation("org.testcontainers:r2dbc:1.16.0")
+    testCompileOnly ("org.projectlombok:lombok:1.18.20")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.20")
 }
 
 dependencyManagement {

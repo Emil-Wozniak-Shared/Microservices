@@ -63,21 +63,18 @@ class UserHandler(
             }
             .flatMap { token ->
                 noContent()
-                    .headers { headers ->
-                        headers.add("Set-Cookie", token.toString())
-                    }
+                    .headers { headers -> headers.add("Set-Cookie", token.toString()) }
                     .build()
 
             }
             .switchIfEmpty(status(UNAUTHORIZED).build())
 
-    override fun all(request: ServerRequest): Mono<ServerResponse> {
-        val contentType = request.headers().contentType()
-        return if (contentType.isPresent && contentType.get() == APPLICATION_XML) {
-            val all = service.allAsXML()
-            ok().mediaType(request).body(all)
-        } else ok().body(service.all())
-    }
+    override fun all(request: ServerRequest): Mono<ServerResponse> =
+        request.headers().contentType().let { contentType ->
+            if (contentType.isPresent && contentType.get() == APPLICATION_XML)
+                ok().mediaType(request).body(service.allAsXML())
+            else ok().body(service.all())
+        }
 
     override fun getOne(request: ServerRequest): Mono<ServerResponse> =
         service
