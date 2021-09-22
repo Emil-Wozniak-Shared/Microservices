@@ -89,7 +89,7 @@ curl -X GET \
   -H 'Content-Type: application/json' \
   -H 'cache-control: no-cache'
 ```
-
+UserHandlerTest
 ##### Request token
 Request body contains json with **username** which is required User object email value.
 

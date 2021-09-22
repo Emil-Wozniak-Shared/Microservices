@@ -20,7 +20,7 @@ import java.time.Duration.ofMinutes
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-internal class UserHandlerTest(var context: ApplicationContext) : BehaviorSpec({
+internal class UserHandlerSpec(var context: ApplicationContext) : BehaviorSpec({
     val uri = "/api/users"
     val mapper = ObjectMapper()
     val client: WebTestClient = bindToApplicationContext(context)
@@ -74,9 +74,5 @@ fun WebTestClient.performRequest(
     uri: String,
     accept: MediaType = APPLICATION_JSON,
     contentType: String = APPLICATION_JSON_VALUE,
-) =
-    this.get().uri(uri)
-        .header(CONTENT_TYPE, contentType)
-        .accept(accept)
-        .exchange()
+) = this.get().uri(uri).header(CONTENT_TYPE, contentType).accept(accept).exchange()
 
