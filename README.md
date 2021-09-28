@@ -56,6 +56,7 @@ fun passwordEncoder(): PasswordEncoder {
 
 ##### Request token
 
+Curl
 ```bash
 curl -X POST \
   http://localhost:8180/users/oauth/token \
@@ -63,7 +64,11 @@ curl -X POST \
   -H 'cache-control: no-cache' \
   -d '{ "username": "John" }'
 ```
+HTTPie
 
+```bash
+printf '{ "username": "John" }'| http  --follow --timeout 3600 POST 'http://localhost:8180/users/oauth/token'  Content-Type:'application/json'  Cache-Control:'no-cache'
+```
 
 ##### Request Users
 
