@@ -74,6 +74,20 @@ curl -X GET \
   -H 'cache-control: no-cache'
 ```
 
+##### Create User
+
+```bash
+curl --location --request POST 'http://localhost:8180/users/api/users/' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "id": null,
+    "firstName": "John",
+    "lastName": "Snow",
+    "password": "123456",
+    "email": "j.snow@test.pl",
+}'
+```
+
 ##### Refresh user service
 ```bash
 curl localhost:8040/actuator/refresh -d {} -H "Content-Type: application/json"
@@ -93,14 +107,16 @@ UserHandlerTest
 ##### Request token
 Request body contains json with **username** which is required User object email value.
 
-```http request
-POST /users/oauth/token HTTP/1.1
-Host: localhost:8180
-Content-Type: application/json
-cache-control: no-cache
-{
-  "username": "e.wozniak@ifzz.pl"
-}------WebKitFormBoundary7MA4YWxkTrZu0gW--
+```bash
+printf '{
+    "id": null,
+    "firstName": "John",
+    "lastName": "Snow",
+    "password": "123456",
+    "email": "j.snow@test.pl",
+    "karma": 80
+}'| http  --follow --timeout 3600 POST 'http://localhost:8180/users/api/users/' \
+ Content-Type:'application/json'
 ```
 
 
