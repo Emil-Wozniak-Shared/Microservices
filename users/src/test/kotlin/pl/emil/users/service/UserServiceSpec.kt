@@ -24,32 +24,31 @@ class UserServiceSpec : FeatureSpec({
         every { encoder.encode(any()) } returns ""
     }
     feature("User Service") {
-        scenario("all") {
+        scenario("should can get all users") {
             every { repository.findAll() } returns Flux.just(user)
             target.all()
             verify(exactly = 1) { repository.findAll() }
         }
 
-        scenario("get one user") {
+        scenario("should can get one user") {
             every { repository.findById(any<UUID>()) } returns Mono.just(user)
             target.one(uuid)
             verify(exactly = 1) { repository.findById(uuid) }
         }
 
-        scenario("successful user create") {
+        scenario("should successful user create") {
             every { repository.save(any()) } returns Mono.just(user)
             target.create(user)
             verify(exactly = 1) { repository.save(user) }
         }
 
-        scenario("findByUsername") {
+        scenario("should can find user be Username") {
             val username = "alex"
             every { repository.findByEmail(username) } returns Mono.just(user)
             target.findByUsername(username)
             verify(exactly = 1) { repository.findByEmail(username) }
         }
     }
-
 })
 
 
