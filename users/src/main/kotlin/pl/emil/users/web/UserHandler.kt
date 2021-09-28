@@ -86,9 +86,7 @@ class UserHandler(
     override fun create(request: ServerRequest): Mono<ServerResponse> =
         request
             .validateBody<User>(validator, "email", "firstName", "lastName")
-            .doOnNext { user ->
-                service.create(user).subscribe()
-            }
+            .doOnNext { user -> service.create(user).subscribe() }
             .flatMap {
                 if (it == null) error(UserCreateException("That user can't be created"))
                 else created(URI.create("/users/${it.id}")).build()

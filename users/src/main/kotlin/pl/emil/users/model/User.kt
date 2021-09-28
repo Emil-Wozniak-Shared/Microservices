@@ -52,3 +52,5 @@ data class User(
     @Column(value = "version")
     var version: Long? = null
 )
+
+

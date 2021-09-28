@@ -1,3 +1,41 @@
+CREATE TABLE IF NOT EXISTS users
+(
+    id         UUID NOT NULL,
+    first_name VARCHAR(255),
+    last_name  VARCHAR(255),
+    password   VARCHAR(255),
+    email      VARCHAR(255),
+    karma      SMALLINT,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    CONSTRAINT pk_user PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS posts
+(
+    id         UUID NOT NULL,
+    title      VARCHAR(255),
+    content    VARCHAR(255),
+    metadata   VARCHAR(255),
+    status     INTEGER,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    CONSTRAINT pk_post PRIMARY KEY (id)
+);
+
+CREATE TABLE comments
+(
+    id         UUID NOT NULL,
+    content    VARCHAR(255),
+    post_id    UUID,
+    created_at TIMESTAMP WITHOUT TIME ZONE,
+    updated_at TIMESTAMP WITHOUT TIME ZONE,
+    version    BIGINT,
+    CONSTRAINT pk_comment PRIMARY KEY (id)
+);
+
 BEGIN;
 DO
 $do$
