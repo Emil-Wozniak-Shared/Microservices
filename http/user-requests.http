@@ -27,7 +27,7 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 > {%
-    client.test("Request executed successfully", function() {
+    client.test("Request executed successfully, status is 201", function() {
         client.assert(response.status === 200, "Response status is not 200");
     });
     client.test("Response content-type is json", function() {
@@ -37,19 +37,35 @@ Content-Type: application/json
 %}
 
 ###
+// Without Bearer token
+GET /users/api/users/ HTTP/1.1
+Host: localhost:8180
+Accept: application/json
+Content-Type: application/json
+
+> {%
+    client.test("Request executed successfully, status equals 401", function() {
+        client.assert(response.status === 401, "Response status is not 401");
+    });
+    client.test("Response content-type is json", function() {
+        var type = response.contentType.mimeType;
+        client.assert(type === "text/plain", "Expected 'plain/text' but received '" + type + "'");
+    });
+%}
+
+###
 
 POST /users/api/users/ HTTP/1.1
 Host: localhost:8180
 Content-Type: application/json
 Accept: application/json
-#Authorization: Bearer {{auth_token}}
 
 {
   "id": null,
-  "firstName": "Sample",
-  "lastName": "Test",
-  "password": "123456",
-  "email": "s.test@test.pl"
+  "firstName": "{{testFirstName}}",
+  "lastName": "{{testLastName}}",
+  "password": "{{testPass}}",
+  "email": "{{testEmail}}"
 }
 
 > {%

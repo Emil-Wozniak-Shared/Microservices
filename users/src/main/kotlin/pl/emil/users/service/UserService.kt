@@ -1,6 +1,7 @@
 package pl.emil.users.service
 
 import org.springframework.context.annotation.Lazy
+import org.springframework.core.env.Environment
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -11,6 +12,7 @@ import pl.emil.users.model.User
 import pl.emil.users.model.UsersXML
 import pl.emil.users.repo.UserRepository
 import pl.emil.users.security.model.SecureUser
+import pl.emil.users.security.token.JwtSigner
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers.boundedElastic
@@ -21,7 +23,7 @@ import java.util.*
 class UserService(
     private val repository: UserRepository,
     @Lazy
-    private var encoder: PasswordEncoder
+    private var encoder: PasswordEncoder,
 ) : ReactiveUserDetailsService {
 
     fun all(): Flux<User> = repository.findAll()
@@ -41,10 +43,8 @@ class UserService(
             repository.save(this)
         }
 
-    override fun findByUsername(username: String): Mono<UserDetails?> {
-        return repository.findByEmail(username).map {
-            if (it != null) SecureUser(it)
-            else throw UsernameNotFoundException("User with username: $username not found")
-        }
-    }
+    override fun findByUsername(username: String): Mono<UserDetails?> =
+        repository.findByEmail(username)?.map {
+            SecureUser(it)
+        } ?: Mono.error(UsernameNotFoundException("User with username: $username not found"))
 }

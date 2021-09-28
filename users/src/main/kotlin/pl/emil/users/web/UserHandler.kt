@@ -1,5 +1,7 @@
 package pl.emil.users.web
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.MediaType.APPLICATION_XML
@@ -28,18 +30,30 @@ class UserHandler(
     private val signer: JwtSigner,
     private val env: Environment
 ) : ApiHandler<User> {
+    companion object {
+        private val log: Logger = LoggerFactory.getLogger(UserHandler::class.java)
+    }
 
     private val credentials = arrayOf("email", "password")
 
     fun token(request: ServerRequest): Mono<ServerResponse> =
         request.bodyToMono(Login::class.java)
             .flatMap { login ->
-                ok().bodyValue(
-                    Token(
-                        signer.createJwt(login.username),
-                        env.getProperty("token.expiration_time")?.toInt() ?: 7200
-                    )
-                )
+                try {
+                    service.findByUsername(login.username)
+                } catch (e: Exception) {
+                    log.error("null")
+                    null
+                }
+            }
+            .map { user ->
+                user?.run {
+                    Token(signer.createJwt(username), getExpiration())
+                }
+            }.flatMap { token ->
+                token?.let {
+                    ok().bodyValue(token)
+                } ?: badRequest().bodyValue("User not found")
             }
 
     @Deprecated(
@@ -97,5 +111,7 @@ class UserHandler(
 
     override fun delete(request: ServerRequest): Mono<ServerResponse> =
         badRequest().mediaType(request).build()
+
+    private fun getExpiration() = env.getProperty("token.expiration_time")?.toInt() ?: 7200
 
 }
