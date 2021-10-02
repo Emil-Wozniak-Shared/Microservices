@@ -11,15 +11,23 @@ import reactor.core.publisher.Mono
 
 @Component
 class GlobalPostFilter : GlobalFilter, Ordered {
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private val log: Logger = LoggerFactory.getLogger(this::class.java.simpleName)
 
     override fun filter(
-        exchange: ServerWebExchange, chain: GatewayFilterChain
+        exchange: ServerWebExchange,
+        chain: GatewayFilterChain
     ): Mono<Void> = with(exchange) {
         chain.filter(this).then(Mono.fromRunnable {
-            with(request) {
-                logger.info("Exiting path: ${path.value()}")
-            }
+            log.info("""
+                Exiting path: ${request.path.value()}
+                Request 
+                => headers: ${request.headers.map { it }.toList()}
+                => cookies: ${request.cookies.map { it }.toList()}
+                Response
+                => status:  ${response.statusCode}
+                => headers: ${response.headers.map { "${it.key}: ${it.value}" }.toList()}
+            """.trimIndent()
+            )
         })
     }
 

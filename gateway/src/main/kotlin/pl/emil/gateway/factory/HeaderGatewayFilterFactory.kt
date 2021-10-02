@@ -10,28 +10,33 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.stereotype.Component
+import pl.emil.gateway.config.BEARER
 import pl.emil.gateway.config.unauthorized
+import pl.emil.gateway.utils.isNotAuthorized
+import pl.emil.gateway.utils.notContainsKey
 import reactor.core.publisher.Mono
+import reactor.core.publisher.Mono.*
 
 @Component
-class HeaderGatewayFilterFactory(
-    private val environment: Environment,
-) : AbstractGatewayFilterFactory<HeaderGatewayFilterFactory.HeaderConfig>(HeaderConfig::class.java) {
+class HeaderGatewayFilterFactory(private val environment: Environment) :
+    AbstractGatewayFilterFactory<HeaderGatewayFilterFactory.HeaderConfig>(HeaderConfig::class.java) {
 
     private val key = Keys.hmacShaKeyFor(environment.getProperty("token.secret")!!.toByteArray())
     private val logger: Logger = LoggerFactory.getLogger(this::class.java)
 
     override fun apply(config: HeaderConfig): GatewayFilter =
         OrderedGatewayFilter({ exchange, chain ->
-            with(exchange.request) {
-                if (path.value().contains(config.verifiedPath)) {
-                    exchange.unauthorized(!headers.containsKey(AUTHORIZATION))
-                    exchange.unauthorized(headers.getFirst(AUTHORIZATION)?.isJwtValid() == false)
+            with(exchange) {
+                request.run {
+                    if (path.value().contains(config.verifiedPath)) {
+                        unauthorized(headers.isNotAuthorized())
+                        unauthorized(headers.getFirst(AUTHORIZATION)?.isJwtValid() == false)
+                    }
                 }
                 chain
                     .filter(exchange)
-                    .then(Mono.fromRunnable {
-                        logger.info("HeaderGatewayFilterFactory ")
+                    .then(fromRunnable {
+                        logger.info(this::class.java.simpleName)
                     })
             }
         }, 2)
@@ -43,7 +48,7 @@ class HeaderGatewayFilterFactory(
                 .parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(this.replace("Bearer", ""))
+                .parseClaimsJws(this.replace(BEARER, ""))
                 .body
                 .subject
         } catch (ex: Exception) {

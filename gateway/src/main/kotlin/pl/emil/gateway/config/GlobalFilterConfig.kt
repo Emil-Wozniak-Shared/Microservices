@@ -10,33 +10,28 @@ import reactor.core.publisher.Mono
 
 @Configuration
 class GlobalFilterConfig {
+    private val name: String = "GlobalFilterConfig.class"
+    private val log: Logger = LoggerFactory.getLogger(name)
 
-    private val logger: Logger = LoggerFactory.getLogger(this::class.java)
+    private fun entrance(nr: Int, enter: Boolean = true) {
+        log.info(" ${if (enter) ">>" else "<<"} $name Order execute=$nr")
+    }
 
     @Bean
     @Order(3)
     fun globally1(): GlobalFilter = GlobalFilter { exchange, chain ->
-        logger.info("GlobalFilterConfig 1 entering")
+        entrance(1)
         chain.filter(exchange).then(Mono.fromRunnable {
-            logger.info("GlobalFilterConfig 1 exiting")
+            entrance(1, false)
         })
     }
 
     @Bean
     @Order(4)
     fun globally2(): GlobalFilter = GlobalFilter { exchange, chain ->
-        logger.info("GlobalFilterConfig 2 entering")
+        entrance(2)
         chain.filter(exchange).then(Mono.fromRunnable {
-            logger.info("GlobalFilterConfig 2 exiting")
-        })
-    }
-
-    @Bean
-    @Order(5)
-    fun globally3(): GlobalFilter = GlobalFilter { exchange, chain ->
-        logger.info("GlobalFilterConfig 3 entering")
-        chain.filter(exchange).then(Mono.fromRunnable {
-            logger.info("GlobalFilterConfig 3 exiting")
+            entrance(2, false)
         })
     }
 }

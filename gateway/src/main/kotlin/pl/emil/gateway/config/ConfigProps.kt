@@ -7,5 +7,4 @@ import org.springframework.stereotype.Component
 @Component
 @EnableConfigurationProperties
 @ConfigurationProperties(value = "app", prefix = "app")
-class ConfigProps {
-}
+class ConfigProps
