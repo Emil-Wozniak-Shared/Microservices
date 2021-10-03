@@ -2,6 +2,39 @@
 
 ## Requirement
 
+- Gradle
+- Kotlin
+- Postgres database
+
+## Project structure
+
+Notice that Projects are not Modules
+
+- **configserver**:
+  - *PROJECT* 
+  - projects properties configuration project
+- **docker**: 
+  - *DIR*
+  - docker images 
+- **gateway**: 
+  - *PROJECT* 
+  - projects gateway
+- **gradle-addons**:
+  - *DIR* 
+  - gradle common configurations
+- **http**:
+  - *DIR* 
+  - sample http requests
+- **posts**: 
+  - *PROJECT* 
+  - sample api for users
+- **src**: 
+  - *PROJECT* 
+  - main module and discovery server
+- **users**: 
+  - *PROJECT* 
+  - user authentication and profile module
+
 ### Database
 
 - Postgresql
@@ -36,6 +69,7 @@ echo '{"title": "Test 13","content": "validate test 3",  "status": "DRAFT"}' | h
 
 #### Gateway 
 
+Request current list of services 
 ```http request
 GET http://localhost:8180/actuator/gateway/routes
 ```
@@ -123,7 +157,6 @@ printf '{
 }'| http  --follow --timeout 3600 POST 'http://localhost:8180/users/api/users/' \
  Content-Type:'application/json'
 ```
-
 
 ### Reference Documentation
 

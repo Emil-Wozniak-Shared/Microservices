@@ -1,0 +1,65 @@
+def jackson(target, module = "core", version = "2.12.2") {
+    dependencies {
+        implementation("com.fasterxml.jackson.${module}:jackson-$target:${version}")
+    }
+}
+
+def jsonwebtoken(target, version = "0.11.1", runtime = true) {
+    dependencies {
+        if (runtime) runtimeOnly("io.jsonwebtoken:jjwt-${target}:$version")
+        else implementation("io.jsonwebtoken:jjwt-${target}:$version")
+    }
+}
+
+def javax(module, target, version = "4.0.1") {
+    dependencies {
+        implementation("javax.$module:$target:$version")
+    }
+}
+
+def spring(module, target) {
+    dependencies {
+        implementation("org.springframework.$module:spring-$module-$target")
+    }
+}
+
+def r2dbc(target, version, runtime = false) {
+    dependencies {
+        if (runtime) runtimeOnly("io.r2dbc:r2dbc-${target}:${version}")
+        else implementation("io.r2dbc:r2dbc-${target}:${version}")
+    }
+}
+
+dependencies {
+    spring("data", "commons")
+    spring("boot", "devtools")
+    spring("boot", "starter-actuator")
+    spring("boot", "starter-webflux")
+    spring("boot", "starter-validation")
+    spring("boot", "starter-security")
+    spring("boot", "starter-data-r2dbc")
+    spring("cloud", "starter-config")
+    spring("cloud", "starter-netflix-eureka-client")
+
+    javax("validation", "validation-api", "2.0.1.Final")
+    javax("servlet", "javax.servlet-api", "4.0.1")
+    javax("annotation", "javax.annotation-api", "1.3.2")
+    javax("persistence", "javax.persistence-api", "2.2")
+    javax("xml.bind", "jaxb-api", "2.3.1")
+
+    jackson("core")
+    jackson("databind")
+    jackson("annotations")
+    jackson("dataformat-xml", "dataformat")
+    jackson("module-kotlin", "module")
+    jackson("datatype-jsr310", "datatype", "2.11.3")
+
+    r2dbc("postgresql", "0.8.8.RELEASE", true)
+    r2dbc("spi", "0.9.0.M1")
+    r2dbc("postgresql", "0.8.6.RELEASE")
+
+    jsonwebtoken("api", "0.11.1", false)
+    jsonwebtoken("impl")
+    jsonwebtoken("jackson")
+
+}

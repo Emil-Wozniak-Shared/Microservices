@@ -1,4 +1,4 @@
-package pl.emil.microservices.config
+package pl.emil.configserver.config
 
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.env.Environment
@@ -8,14 +8,19 @@ import java.net.InetAddress.getLocalHost
 @Component
 class StartLogger(private val env: Environment) {
     fun write() {
-        println("""
+        println(
+            """
             ______________________________________________________
             | Application name: =>  ${env.getProperty("spring.application.name")}
             | Zone:             =>  ${env.getProperty("eureka.client.service-url.defaultZone")}
             | Address:          =>  ${getLocalHost().hostName}@${getLocalHost().hostAddress}:${env.getProperty("server.port")}
+            | Config address:   =>  ${env.getProperty("spring.cloud.config.server.git.uri")}
+            | Config username:  =>  ${env.getProperty("spring.cloud.config.server.git.username")}
             ______________________________________________________
-        """.trimIndent())
+        """.trimIndent()
+        )
     }
 }
 
 fun ConfigurableApplicationContext.thenLog() = (this.getBean("startLogger") as StartLogger).write()
+

@@ -1,0 +1,50 @@
+buildscript {
+    repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
+    dependencies { classpath("org.jetbrains.kotlin:kotlin-allopen:1.5.0-M1") }
+}
+
+static def kotest(String target = "", module = "", version = "4.6.3") {
+    "io.kotest${if (module.isBlank()) "" else ".$module"}:kotest-$target:$version"
+}
+
+allOpen {
+    annotation("javax.persistence.Entity")
+    annotation("javax.persistence.MappedSuperclass")
+    annotation("javax.persistence.Embeddable")
+    annotation("org.springframework.data.relational.core.mapping.Table")
+    annotation("javax.xml.bind.annotation.XmlRootElement")
+}
+
+dependencies {
+    testImplementation(kotest("assertions-core"))
+    testImplementation(kotest("property"))
+    testImplementation(kotest("framework-engine-jvm"))
+    testImplementation(kotest("runner-junit5"))
+    testImplementation(kotest("assertions-core-jvm"))
+    testImplementation(kotest("framework-engine-jvm"))
+}
+
+ext {
+    set('springCloudVersion', "2020.0.3")
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
+
+kotlin {
+    sourceSets {
+        commonTest {
+            dependencies {
+                implementation kotlin("test")
+            }
+        }
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+

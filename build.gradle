@@ -2,8 +2,8 @@ plugins {
     id "java"
     id "maven"
     id "idea"
-    id "org.jetbrains.kotlin.jvm" version "1.5.31"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
+    id "org.jetbrains.kotlin.jvm" version "1.5.30"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.5.30"
     id("io.kotest") version "0.3.8"
     id("org.springframework.boot") version "2.4.3"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
@@ -14,29 +14,17 @@ version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 11
 targetCompatibility = 11
 
-apply from: 'gradle-extensions/core.gradle'
+apply from: 'gradle-addons/core.gradle'
+apply from: 'gradle-addons/jetbrains.gradle'
 
 repositories {
     mavenCentral()
 }
 
-ext {
-    set('springCloudVersion', "2020.0.3")
-}
-
-
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.glassfish.jaxb:jaxb-runtime")
-}
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
-    }
 }
 
 
@@ -45,18 +33,4 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "11"
     }
-}
-
-kotlin {
-    sourceSets {
-        commonTest {
-            dependencies {
-                implementation kotlin("test")
-            }
-        }
-    }
-}
-
-test {
-    useJUnitPlatform()
 }

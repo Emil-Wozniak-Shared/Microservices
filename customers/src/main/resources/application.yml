@@ -1,8 +1,8 @@
 spring:
   config:
-    import: discovery.yml
+    import: optional:configserver:http://localhost:8182
   application:
-    name: posts
+    name: customers
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
@@ -13,16 +13,12 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  rabbitmq:
-    host: localhost
-    username: admin
-    password: admin
-    port: 5672
   devtools:
     restart:
       enabled: true
+
 server:
-  port: 8020
+  port: ${PORT:8060}
 eureka:
   instance:
     prefer-ip-address: true

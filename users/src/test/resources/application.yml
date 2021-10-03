@@ -1,6 +1,6 @@
 spring:
   config:
-    import: discovery.yml
+    import: "discovery.yml"
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true

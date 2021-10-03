@@ -1,13 +1,12 @@
 package pl.emil.gateway
 
-import org.junit.jupiter.api.Test
+import io.kotest.core.spec.style.FunSpec
+import io.kotest.matchers.shouldNotBe
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class GatewayApplicationTests {
-
-    @Test
-    fun contextLoads() {
+class GatewayApplicationTests: FunSpec({
+    test("context loads") {
+        this shouldNotBe null
     }
-
-}
+})

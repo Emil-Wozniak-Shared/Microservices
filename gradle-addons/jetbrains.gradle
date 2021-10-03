@@ -1,0 +1,11 @@
+def jetbrains(module, target) {
+    dependencies {
+        implementation("org.jetbrains.${module}:${module}-${target}")
+    }
+}
+
+dependencies {
+    jetbrains("kotlin", "reflect")
+    jetbrains("kotlin", "stdlib-jdk8")
+    jetbrains("kotlinx", "coroutines-reactor")
+}

@@ -1,4 +1,4 @@
-package pl.emil.microservices.config
+package pl.emil.gateway.config
 
 import org.springframework.context.ConfigurableApplicationContext
 import org.springframework.core.env.Environment
@@ -17,5 +17,4 @@ class StartLogger(private val env: Environment) {
         """.trimIndent())
     }
 }
-
 fun ConfigurableApplicationContext.thenLog() = (this.getBean("startLogger") as StartLogger).write()

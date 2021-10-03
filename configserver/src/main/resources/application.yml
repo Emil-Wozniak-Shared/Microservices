@@ -6,15 +6,18 @@ spring:
       server:
         git:
           timeout: 4
+          # TODO never hardcode your credentials!!!
+          # Sample config in EmilConfig github
+          uri: ${URI}
+          username: ${USER}
+          password: ${PASS}
+          searchPaths: '{application}'
           skipSslValidation: true
-          clone-on-start: true
-          uri: https://github.com/EmilConfig/MicroserviceConfigServer
-          username: EmilConfig
-          password: ya4haV09CAfD
           force-pull: true
+          ignore-local-ssh-settings: true
 
 server:
-  port: 8182
+  port: ${PORT:8182}
 
 management:
   endpoint:

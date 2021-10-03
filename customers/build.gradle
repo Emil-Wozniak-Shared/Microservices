@@ -1,0 +1,50 @@
+buildscript {
+    repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-allopen:1.5.0-M1")
+    }
+}
+
+plugins {
+    id "java"
+    id "idea"
+    id("io.kotest") version "0.3.8"
+    id "org.jetbrains.kotlin.jvm" version "1.5.31"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
+    id("org.springframework.boot") version "2.4.3"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+}
+
+apply plugin: "org.jetbrains.kotlin.plugin.spring"
+apply from: "../gradle-addons/core.gradle"
+apply from: "../gradle-addons/spring.gradle"
+apply from: "../gradle-addons/jetbrains.gradle"
+
+group = "pl.emil"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "11"
+    }
+}

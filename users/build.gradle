@@ -1,0 +1,65 @@
+buildscript {
+    repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-allopen:1.5.0-M1")
+    }
+}
+
+plugins {
+    id "java"
+    id "maven"
+    id "idea"
+    id("io.kotest") version "0.3.8"
+    id "org.jetbrains.kotlin.jvm" version "1.5.31"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
+    id("org.springframework.boot") version "2.4.3"
+    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+}
+
+apply plugin: "org.jetbrains.kotlin.plugin.spring"
+apply from: "../gradle-addons/core.gradle"
+apply from: "../gradle-addons/spring.gradle"
+apply from: "../gradle-addons/jetbrains.gradle"
+
+group = "pl.emil"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    implementation("net.logstash.logback:logstash-logback-encoder:6.4")
+    implementation("org.junit.jupiter:junit-jupiter:5.4.2")
+    implementation("com.vladmihalcea:hibernate-types-52:2.1.1")
+    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
+    runtimeOnly("org.postgresql:postgresql")
+
+
+    implementation("org.glassfish.jaxb:jaxb-runtime")
+    implementation("com.github.jmnarloch:modelmapper-spring-boot-starter:1.1.0")
+    implementation("org.modelmapper:modelmapper:2.3.9")
+
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("org.glassfish.jaxb:jaxb-runtime")
+
+    testImplementation("com.winterbe:expekt:0.5.0")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+
+    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("org.testcontainers:postgresql:1.16.0")
+    testImplementation("org.testcontainers:r2dbc:1.16.0")
+    testCompileOnly("org.projectlombok:lombok:1.18.20")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.20")
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+        freeCompilerArgs = ["-Xjsr305=strict"]
+        jvmTarget = "11"
+    }
+}

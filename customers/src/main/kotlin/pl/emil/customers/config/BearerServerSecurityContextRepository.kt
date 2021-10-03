@@ -1,8 +1,8 @@
-package pl.emil.users.repo
+package pl.emil.customers.config
 
 import org.springframework.http.server.reactive.ServerHttpRequest
 import org.springframework.security.core.context.SecurityContext
-import org.springframework.security.core.context.SecurityContextHolder.createEmptyContext
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken
 import org.springframework.security.web.server.context.ServerSecurityContextRepository
 import org.springframework.web.server.ServerWebExchange
@@ -14,7 +14,7 @@ class BearerServerSecurityContextRepository : ServerSecurityContextRepository {
         Mono.empty()
 
     override fun load(exchange: ServerWebExchange): Mono<SecurityContext> =
-        with(createEmptyContext()) {
+        with(SecurityContextHolder.createEmptyContext()) {
             tokenFromRequest(exchange.request)?.let { token ->
                 this.authentication = PreAuthenticatedAuthenticationToken(token, token)
                 Mono.just(this)

@@ -2,12 +2,13 @@ spring:
   config:
     import: optional:configserver:http://localhost:8182
   application:
-    name: users
+    name: posts
 eureka:
   instance:
     prefer-ip-address: true
     hostname: localhost
-#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    # custom instance id
+    # instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
   client:
     allow-redirects: true
     service-url:
