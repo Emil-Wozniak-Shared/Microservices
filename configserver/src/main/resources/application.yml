@@ -15,9 +15,12 @@ spring:
           skipSslValidation: true
           force-pull: true
           ignore-local-ssh-settings: true
+          # Github uses main as default
+          default-label: 'main'
+
 
 server:
-  port: ${PORT:8182}
+  port: ${PORT:8888}
 
 management:
   endpoint:

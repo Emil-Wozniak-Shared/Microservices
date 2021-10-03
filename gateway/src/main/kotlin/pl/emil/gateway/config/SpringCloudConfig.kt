@@ -1,9 +1,6 @@
 package pl.emil.gateway.config
 
-import org.springframework.cloud.gateway.filter.OrderedGatewayFilter
-import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
-import org.springframework.cloud.gateway.route.builder.filters
-import org.springframework.cloud.gateway.route.builder.routes
+import org.springframework.cloud.gateway.route.builder.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.emil.gateway.factory.HeaderGatewayFilterFactory
@@ -11,44 +8,49 @@ import pl.emil.gateway.factory.HeaderGatewayFilterFactory.HeaderConfig
 import reactor.kotlin.core.publisher.toMono
 
 @Configuration
-class SpringCloudConfig {
-
-    private fun String.toRouteUri() = "lb://$this"
-    private fun String.toSegmentRegex() = "/$this(?<segment>/?.*)"
-    private fun String.withSubPaths() = "/$this/**"
+class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
 
     @Bean
-    fun additionalRouteLocator(
-        builder: RouteLocatorBuilder,
-        headerFactory: HeaderGatewayFilterFactory
-    ) = builder.routes {
-        "users".let { path ->
-            route(id = path, uri = path.toRouteUri()) {
-                host(LOCALHOST) and path(path.withSubPaths())
-                filters {
-                    rewritePath(path.toSegmentRegex(), REPLACE_SEGMENT)
-                        .filter(headerFactory.apply(HeaderConfig(API)))
+    fun additionalRouteLocator(builder: RouteLocatorBuilder) =
+        builder.routes {
+            endpoint("users") {
+            }
+            endpoint("posts") {
+            }
+            endpoint("customers") {
+                asyncPredicate {
+                    it.request.uri.path.contains("customers").toMono()
                 }
-                build()
+            }
+            endpoint(
+                "http://localhost:8182",
+                "service_route_java_config",
+                loadBalance = false,
+                subPaths = false
+            ) {
             }
         }
-        "posts".let { path ->
-            route(id = path, uri = path.toRouteUri()) {
-                host(LOCALHOST) and path(path.withSubPaths())
+
+    private fun RouteLocatorDsl.endpoint(
+        endpoint: String,
+        id: String? = null,
+        loadBalance: Boolean = true,
+        subPaths: Boolean = true,
+        rewritePath: Boolean = true,
+        init: PredicateSpec.() -> Unit
+    ) = this.route(id = id ?: "local-$endpoint", uri = if (loadBalance) endpoint.loadBalance() else endpoint) {
+        host(LOCALHOST) and path(if (subPaths) endpoint.withSubPaths() else endpoint)
+        init.invoke(this)
+        if (rewritePath) {
+            filters {
+                rewritePath(endpoint.toSegmentRegex(), REPLACE_SEGMENT).filter(headerFactory.apply(HeaderConfig(API)))
             }
         }
-        route(id = "test-route", uri = "customers".toRouteUri()) {
-            asyncPredicate {
-                it.request.uri.path.contains("customers").toMono()
-            }
-        }
-        route(id = "service_route_java_config", uri = "http://localhost:8081") {
-            path("/service/**")
-                .and()
-                .filters {
-                    rewritePath("users".toSegmentRegex(), REPLACE_SEGMENT)
-                        .filter(headerFactory.apply(HeaderConfig(API)))
-                }
-        }
+        build()
     }
+
+    private fun String.loadBalance() = "lb://$this"
+    private fun String.toSegmentRegex() = "/$this(?<segment>/?.*)"
+    private fun String.withSubPaths() = "/$this/**"
 }
+

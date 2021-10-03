@@ -2,6 +2,14 @@ server:
   port: 8180
 
 spring:
+  config:
+    import: config.properties
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
   application:
     name: gateway
   rabbitmq:
@@ -9,12 +17,6 @@ spring:
     username: admin
     password: admin
     port: 5672
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
 
 eureka:
   instance:
