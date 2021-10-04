@@ -1,15 +1,15 @@
 spring:
   config:
-    import: optional:configserver:http://localhost:8182
+    import: config.properties
   application:
     name: customers
   main:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/microservice
-    username: ifzz
-    password: ifzz
+    url: r2dbc:postgresql://localhost:${DB_PORT:5432}/microservice
+    username: ${DB_USER:ifzz}
+    password: ${DB_PASS:ifzz}
   jpa:
     hibernate:
       ddl-auto: update

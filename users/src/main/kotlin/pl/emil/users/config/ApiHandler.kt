@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 interface ApiHandler<T> {
-    fun all(request: ServerRequest): Mono<ServerResponse>
+    fun getAll(request: ServerRequest): Mono<ServerResponse>
     fun getOne(request: ServerRequest): Mono<ServerResponse>
     fun create(request: ServerRequest): Mono<ServerResponse>
     fun update(request: ServerRequest): Mono<ServerResponse>
@@ -45,5 +45,5 @@ fun Mono<ServerResponse>.onErrorResponse(status: HttpStatus = BAD_REQUEST): Mono
     this.onErrorResume {
         ServerResponse
             .status(status)
-            .body(Mono.just(ExceptionResponse(it.message, it.toString())))
+            .body(Mono.just(ExceptionResponse(it.message, it.cause.toString())))
     }

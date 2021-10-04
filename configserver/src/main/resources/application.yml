@@ -11,13 +11,12 @@ spring:
           uri: ${URI}
           username: ${USER}
           password: ${PASS}
-          searchPaths: '{application}'
+#          searchPaths: '{application}'
           skipSslValidation: true
           force-pull: true
           ignore-local-ssh-settings: true
           # Github uses main as default
           default-label: 'main'
-
 
 server:
   port: ${PORT:8888}

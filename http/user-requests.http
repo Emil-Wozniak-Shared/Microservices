@@ -5,17 +5,40 @@ Host: localhost:8180
 Content-Type: application/json
 Cache-Control: no-cache
 
-{ "username": "John" }
+{
+  "username": "e.wozniak@test.pl"
+}
 
 > {%
-    client.test("Request executed successfully", function() {
+    client.test("Request token successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
-    });
-    client.test("Response content-type is json", function() {
         var type = response.contentType.mimeType;
         client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
     });
     client.global.set("auth_token", response.body.token);
+%}
+
+###
+POST /users/oauth/token HTTP/1.1
+Host: localhost:8180
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "username": "t.wozniak@test.pl"
+}
+
+> {%
+    client.test("Request token fail", function() {
+        client.assert(response.status === 400, "Response status is not 200");
+        var type = response.contentType.mimeType;
+        var body = response.body;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+        client.assert(
+            body.message === "User with email 't.wozniak@test.pl' doesn't exist",
+            "Expected User with email 't.wozniak@test.pl' doesn't exist but received '" + body.message + "'"
+        );
+    });
 %}
 
 ###
@@ -27,10 +50,8 @@ Authorization: Bearer {{auth_token}}
 Content-Type: application/json
 
 > {%
-    client.test("Request executed successfully, status is 201", function() {
+    client.test("Request all users with Bearer token finished successfully", function() {
         client.assert(response.status === 200, "Response status is not 200");
-    });
-    client.test("Response content-type is json", function() {
         var type = response.contentType.mimeType;
         client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
     });
@@ -44,10 +65,8 @@ Accept: application/json
 Content-Type: application/json
 
 > {%
-    client.test("Request executed successfully, status equals 401", function() {
+    client.test("Request all users without Bearer token finished with code 401", function() {
         client.assert(response.status === 401, "Response status is not 401");
-    });
-    client.test("Response content-type is json", function() {
         var type = response.contentType.mimeType;
         client.assert(type === "text/plain", "Expected 'plain/text' but received '" + type + "'");
     });
@@ -69,12 +88,14 @@ Accept: application/json
 }
 
 > {%
-    client.test("Request executed successfully", function() {
+    client.test("Request create a user finished successfully", function() {
         client.assert(response.status === 201, "Response status is not 201");
-    });
-    client.test("Response content-type is json", function() {
         var type = response.contentType.mimeType;
-        client.assert(type === "text/plain", "Expected 'text/plain' but received '" + type + "'");
+        var body = response.body;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+        client.assert(body.firstName === "John", "Expected 'firstName' John but received '" + body.firstName + "'");
+        client.assert(body.lastName === "Snow", "Expected 'lastName' Snow but received '" + body.lastName + "'");
+        client.assert(body.email === "j.snow@test.pl", "Expected 'email' j.snow@test.pl but received '" + body.email + "'");
     });
 %}
 

@@ -7,6 +7,7 @@ import java.util.*
 
 interface UserRepository : ReactiveCrudRepository<User, UUID> {
 
-    fun findByEmail(email: String): Mono<User>?
+    fun findByEmail(email: String): Mono<User?>
 
+    fun existsByEmail(email: String): Mono<Boolean>
 }

@@ -7,7 +7,7 @@ spring:
     web-application-type: reactive
     allow-bean-definition-overriding: true
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/microservice
+    url: r2dbc:postgresql://localhost:${DB_PORT:5432}/microservice
     username: ifzz
     password: ifzz
   jpa:

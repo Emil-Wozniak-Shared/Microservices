@@ -9,32 +9,31 @@ import org.springframework.web.reactive.function.server.router
 class Routes(@Value("\${token.expiration_time}") private val expiration: String) {
 
     @Bean(value = ["allRoutes"])
-    fun routes(
-        users: UserHandler
-    ) = router {
-        "/yml".nest {
-            GET("") {
-                ok().bodyValue(expiration)
-            }
-        }
-        "/oauth/token".nest {
-            POST(users::token)
-        }
-        "/api".nest {
-            "/login".nest {
-                POST(users::login)
-            }
-            "/users".nest {
-                "".nest {
-                    GET(users::all)
-                    POST(users::create)
-                }
-                "{id}".nest {
-                    GET(users::getOne)
-                    PUT(users::update)
-                    DELETE(users::delete)
+    fun routes(users: UserHandler) =
+        router {
+            "/yml".nest {
+                GET("") {
+                    ok().bodyValue(expiration)
                 }
             }
+            "/oauth/token".nest {
+                POST(users::token)
+            }
+            "/api".nest {
+                "/login".nest {
+                    POST(users::login)
+                }
+                "/users".nest {
+                    "{id}".nest {
+                        GET(users::getOne)
+                        PUT(users::update)
+                        DELETE(users::delete)
+                    }
+                    "".nest {
+                        GET(users::getAll)
+                        POST(users::create)
+                    }
+                }
+            }
         }
-    }
 }

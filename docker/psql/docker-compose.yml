@@ -1,42 +1,23 @@
 #https://github.com/khezen/compose-postgres
-version: '3.5'
+version: '3'
+
 services:
+
   postgres:
-    container_name: psql-test
-    image: postgres
+    container_name: microservice
+    image: postgres:9.6.23
+    build:
+      context: .
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-ifzz}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ifzz}
-      POSTGRES_DB: ${POSTGRES_PASSWORD:-ifzz}
-      PGDATA: /data/postgres
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: admin
     volumes:
-      - postgres:/data/postgres/data
+      - ./init/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./data:/opt/data
     ports:
-      - "5434:5434"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-  pgadmin:
-    container_name: pgadmin_container
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    volumes:
-      - pgadmin:/var/lib/pgadmin
-
-    ports:
-      - "${PGADMIN_PORT:-5050}:80"
-    networks:
-      - postgres
-    restart: unless-stopped
-
-networks:
-  postgres:
-    driver: bridge
+      - "5434:5432"
+    restart: always
 
 volumes:
-  postgres:
-  pgadmin:
+  postgres-data:
