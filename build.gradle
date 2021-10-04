@@ -34,3 +34,8 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         jvmTarget = "11"
     }
 }
+
+task addCommon(type: GradleBuild) {
+    buildFile './common/build.gradle'
+    tasks = ['publishToMavenLocal']
+}

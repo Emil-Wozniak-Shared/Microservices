@@ -2,38 +2,22 @@
 
 ## Requirement
 
-- Gradle
-- Kotlin
-- Postgres database
+- **Gradle**
+- **Kotlin**
+- **common project** in local .m2 repository 
+- **Postgres**
+  - database: *microservice*
+  
+### Project *common*
 
-## Project structure
+Go to [common](./common) project and execute publish to local repository
 
-Notice that Projects are not Modules
+```bash
+gradle publishToMavenLocal
+```
+or type `ctrl + ctrl`  and then `gradle addCommon`, it also works in other projects.
 
-- **configserver**:
-  - *PROJECT* 
-  - projects properties configuration project
-- **docker**: 
-  - *DIR*
-  - docker images 
-- **gateway**: 
-  - *PROJECT* 
-  - projects gateway
-- **gradle-addons**:
-  - *DIR* 
-  - gradle common configurations
-- **http**:
-  - *DIR* 
-  - sample http requests
-- **posts**: 
-  - *PROJECT* 
-  - sample api for users
-- **src**: 
-  - *PROJECT* 
-  - main module and discovery server
-- **users**: 
-  - *PROJECT* 
-  - user authentication and profile module
+This will install **common** project to your local m2 repository.
 
 ### Database
 
@@ -45,6 +29,45 @@ Notice that Projects are not Modules
 
 **IMPORTANT**
 Execute [schema.sql](src/main/resources/schema.sql) file
+
+You can use also [Docker](./docker/psql/docker-compose.yml) image, with few configurations
+this will help you speed up start applications.
+
+All projects can replace use custom database **username**, **password** and **port** by providing
+environment variables **DB_PORT**, **DB_USER** and / or **DB_PASS**. I provided those to help
+avoid conflicts on the ports.
+
+## Project structure
+
+Notice that Projects are not Modules
+
+- **common**:
+  - *PROJECT*
+  - provides common classes for others projects
+- **configserver**:
+  - *PROJECT*
+  - projects properties configuration project
+- **docker**:
+  - *DIR*
+  - docker images
+- **gateway**:
+  - *PROJECT*
+  - projects gateway
+- **gradle-addons**:
+  - *DIR*
+  - gradle common configurations
+- **http**:
+  - *DIR*
+  - sample http requests
+- **posts**:
+  - *PROJECT*
+  - sample api for users
+- **src**:
+  - *PROJECT*
+  - main module and discovery server
+- **users**:
+  - *PROJECT*
+  - user authentication and profile module
 
 ## Endpoints
 

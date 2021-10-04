@@ -48,3 +48,7 @@ test {
     useJUnitPlatform()
 }
 
+task addCommon(type: GradleBuild) {
+    buildFile '../common/build.gradle'
+    tasks = ['publishToMavenLocal']
+}
