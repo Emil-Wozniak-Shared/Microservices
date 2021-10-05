@@ -1,4 +1,4 @@
-package pl.emil.customers.config
+package pl.emil.posts.repo
 
 import pl.emil.common.repo.CommonBearerServerSecurityContextRepository
 

@@ -1,12 +1,12 @@
 
 ###
-POST /users/oauth/token HTTP/1.1
-Host: localhost:8180
+POST /oauth/token HTTP/1.1
+Host: localhost:8040
 Content-Type: application/json
 Cache-Control: no-cache
 
 {
-  "username": "e.wozniak@test.pl"
+  "username": "a.wozniak@test.pl"
 }
 
 > {%

@@ -1,0 +1,4 @@
+ext {
+    microservice_common_version="0.1.1-SNAPSHOT"
+    springCloudVersion="2020.0.3"
+}

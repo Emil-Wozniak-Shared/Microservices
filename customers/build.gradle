@@ -19,17 +19,16 @@ apply plugin: "org.jetbrains.kotlin.plugin.spring"
 apply from: "../gradle-addons/core.gradle"
 apply from: "../gradle-addons/spring.gradle"
 apply from: "../gradle-addons/jetbrains.gradle"
+apply from: '../gradle-addons/kotest.gradle'
+apply from: "../gradle-addons/common.gradle"
 
 group = "pl.emil"
 version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 11
 targetCompatibility = 11
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
+    implementation group: "pl.emil", name: "common", version: "0.1.1-SNAPSHOT"
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

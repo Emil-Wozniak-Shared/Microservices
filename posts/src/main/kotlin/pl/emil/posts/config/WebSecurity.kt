@@ -1,23 +1,23 @@
-package pl.emil.users.config
+package pl.emil.posts.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod.POST
+import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.ReactiveAuthenticationManager
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder.AUTHENTICATION
-import org.springframework.security.config.web.server.SecurityWebFiltersOrder.FIRST
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder.*
 import org.springframework.security.config.web.server.ServerHttpSecurity
-import org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder
+import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
 import pl.emil.common.config.SecurityWebConfig
-import pl.emil.users.repo.BearerServerSecurityContextRepository
-import pl.emil.users.security.filter.CorsFilter
-import pl.emil.users.security.filter.JWTWebFilter
-import pl.emil.users.security.token.JwtAuthenticationProvider
-import pl.emil.users.security.token.JwtSigner
+import pl.emil.posts.repo.BearerServerSecurityContextRepository
+import pl.emil.posts.security.filter.JWTWebFilter
+import pl.emil.posts.security.filter.CorsFilter
+import pl.emil.posts.security.token.JwtAuthenticationProvider
+import pl.emil.posts.security.token.JwtSigner
 
 @Configuration
 @EnableWebFluxSecurity
@@ -36,7 +36,7 @@ class WebSecurity(private val signer: JwtSigner): SecurityWebConfig {
                 .pathMatchers("/yml").permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/oauth/token").permitAll()
-                .pathMatchers(POST, "/api/users").permitAll()
+                .pathMatchers(HttpMethod.POST, "/api/users").permitAll()
                 .anyExchange().authenticated()
             httpBasic().disable()
                 .formLogin().disable()
@@ -50,5 +50,6 @@ class WebSecurity(private val signer: JwtSigner): SecurityWebConfig {
         JwtAuthenticationProvider(signer)
 
     @Bean
-    override fun passwordEncoder(): PasswordEncoder = createDelegatingPasswordEncoder()
+    override fun passwordEncoder(): PasswordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder()
 }
+

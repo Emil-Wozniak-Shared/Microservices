@@ -12,7 +12,7 @@ class StartLogger(private val env: Environment) {
             """
             ______________________________________________________
             | Application name: =>  ${env.getProperty("spring.application.name")}
-            | Zone:             =>  ${env.getProperty("eureka.client.service-url.defaultZone")}
+            | Zone:             =>  ${env.getProperty("eureka.client.service_url.defaultZone")}
             | Address:          =>  ${getLocalHost().hostName}@${getLocalHost().hostAddress}:${env.getProperty("server.port")}
             | Config address:   =>  ${env.getProperty("spring.cloud.config.server.git.uri")}
             | Config username:  =>  ${env.getProperty("spring.cloud.config.server.git.username")}
