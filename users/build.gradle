@@ -21,6 +21,7 @@ apply from: "../gradle-addons/core.gradle"
 apply from: "../gradle-addons/spring.gradle"
 apply from: "../gradle-addons/jetbrains.gradle"
 
+
 group = "pl.emil"
 version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 11
@@ -32,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    implementation group:  "pl.emil", name: "common", version: "0.0.1-SNAPSHOT"
+    implementation group: "pl.emil", name: "common", version: "0.0.1-SNAPSHOT"
 
     implementation("net.logstash.logback:logstash-logback-encoder:6.4")
     implementation("org.junit.jupiter:junit-jupiter:5.4.2")
@@ -64,3 +65,4 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         jvmTarget = "11"
     }
 }
+

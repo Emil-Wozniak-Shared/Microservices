@@ -35,7 +35,9 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     }
 }
 
-task addCommon(type: GradleBuild) {
-    buildFile './common/build.gradle'
-    tasks = ['publishToMavenLocal']
+tasks.configureEach {
+    if (it.name == 'addCommon') {
+        it.buildFile = './common/build.gradle'
+    }
 }
+

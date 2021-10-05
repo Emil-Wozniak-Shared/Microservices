@@ -12,6 +12,7 @@ import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.factory.PasswordEncoderFactories.createDelegatingPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
+import pl.emil.common.config.SecurityWebConfig
 import pl.emil.users.repo.BearerServerSecurityContextRepository
 import pl.emil.users.security.filter.CorsFilter
 import pl.emil.users.security.filter.JWTWebFilter
@@ -23,10 +24,10 @@ import pl.emil.users.security.token.JwtSigner
 @EnableReactiveMethodSecurity
 class WebSecurity(
     private val signer: JwtSigner
-) {
+): SecurityWebConfig {
 
     @Bean
-    fun springWebFilterChain(
+    override fun springWebFilterChain(
         http: ServerHttpSecurity, authenticationManager: ReactiveAuthenticationManager
     ): SecurityWebFilterChain = http
         .apply {
@@ -47,9 +48,9 @@ class WebSecurity(
         .build()
 
     @Bean
-    fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =
+    override fun reactiveAuthenticationManager(): ReactiveAuthenticationManager =
         JwtAuthenticationProvider(signer)
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder = createDelegatingPasswordEncoder()
+    override fun passwordEncoder(): PasswordEncoder = createDelegatingPasswordEncoder()
 }

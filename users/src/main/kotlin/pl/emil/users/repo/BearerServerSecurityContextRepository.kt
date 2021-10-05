@@ -24,7 +24,7 @@ class BearerServerSecurityContextRepository : ServerSecurityContextRepository {
     private fun tokenFromRequest(request: ServerHttpRequest): String? {
         if (request.headers["Authorization"] == null) return null
         val value = (request.headers["Authorization"] as List<String>)[0]
-        if (!value.toLowerCase().startsWith("bearer")) {
+        if (!value.lowercase().startsWith("bearer")) {
             return null
         }
         val parts = value

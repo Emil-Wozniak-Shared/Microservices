@@ -5,6 +5,10 @@
 - **Gradle**
 - **Kotlin**
 - **common project** in local .m2 repository 
+  - Environment variables
+    * URI = web or local store of project properties
+    * USER = store username credential
+    * PASS = store password credential
 - **Postgres**
   - database: *microservice*
   
@@ -196,3 +200,14 @@ These additional references should also help you:
 
 * [Gradle Build Scans – insights for your project's build](https://scans.gradle.com#gradle)
 
+## Properties Store
+
+In my store I use pattern:
+<pre>
+📦 Project dir
+┣ 📜 application.yml
+┣ 📂 posts
+┃ ┗ 📜 application.yml
+┣ 📂 users
+┃ ┗ 📜 application.yml
+</pre>

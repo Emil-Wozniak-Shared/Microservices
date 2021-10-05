@@ -1,4 +1,8 @@
 spring:
+  security:
+    user:
+      name: user
+      password: 123456
   config:
     import: discovery.yml
   application:

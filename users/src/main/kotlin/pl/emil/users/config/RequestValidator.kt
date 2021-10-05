@@ -25,7 +25,6 @@ class RequestValidator : SmartValidator {
      * Don't use it since it will not handle javax annotations.
      */
     override fun validate(target: Any, errors: Errors) {
-//        val validatorAdapter = SpringValidatorAdapter(validator)
-//        validatorAdapter.validate(target, errors)
+
     }
 }
