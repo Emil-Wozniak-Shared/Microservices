@@ -10,8 +10,8 @@ import pl.emil.posts.model.Post
 import pl.emil.posts.web.handlers.ApiHandler
 
 @Configuration
-class Routes {
-    @Bean(value = ["allRoutes"])
+class RouteConfig {
+    @Bean
     fun routes(posts: ApiHandler<Post>, comments: ApiHandler<Comment>) =
         router {
             "api".nest {

@@ -1,7 +1,7 @@
 
 ###
-POST /oauth/token HTTP/1.1
-Host: localhost:8040
+POST /users/oauth/token HTTP/1.1
+Host: localhost:8180
 Content-Type: application/json
 Cache-Control: no-cache
 
@@ -93,9 +93,9 @@ Accept: application/json
         var type = response.contentType.mimeType;
         var body = response.body;
         client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
-        client.assert(body.firstName === "John", "Expected 'firstName' John but received '" + body.firstName + "'");
-        client.assert(body.lastName === "Snow", "Expected 'lastName' Snow but received '" + body.lastName + "'");
-        client.assert(body.email === "j.snow@test.pl", "Expected 'email' j.snow@test.pl but received '" + body.email + "'");
+        client.assert(body.firstName === "Adrian", "Expected 'firstName' Adrian but received '" + body.firstName + "'");
+        client.assert(body.lastName === "Woźniak", "Expected 'lastName' Woźniak but received '" + body.lastName + "'");
+        client.assert(body.email === "a.wozniak@test.pl", "Expected 'email' a.wozniak@test.pl but received '" + body.email + "'");
     });
 %}
 

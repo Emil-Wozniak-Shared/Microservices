@@ -1,0 +1,35 @@
+
+###
+POST /users/oauth/token HTTP/1.1
+Host: localhost:8180
+Content-Type: application/json
+Cache-Control: no-cache
+
+{
+  "username": "a.wozniak@test.pl"
+}
+
+> {%
+    client.test("Request token successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+    client.global.set("auth_token", response.body.token);
+%}
+
+###
+
+GET /posts/api/posts/ HTTP/1.1
+Host: localhost:8180
+Accept: application/json
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+> {%
+    client.test("Request all users with Bearer token finished successfully", function() {
+        client.assert(response.status === 200, "Response status is not 200");
+        var type = response.contentType.mimeType;
+        client.assert(type === "application/json", "Expected 'application/json' but received '" + type + "'");
+    });
+%}
