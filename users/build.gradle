@@ -9,11 +9,11 @@ plugins {
     id "java"
     id "maven"
     id "idea"
-    id("io.kotest") version "0.3.8"
+    id "io.kotest" version "0.3.8"
     id "org.jetbrains.kotlin.jvm" version "1.5.31"
     id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
-    id("org.springframework.boot") version "2.4.3"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id "org.springframework.boot" version "2.5.5"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
 apply plugin: "org.jetbrains.kotlin.plugin.spring"

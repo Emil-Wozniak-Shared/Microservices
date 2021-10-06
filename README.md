@@ -5,6 +5,7 @@
 - **Gradle**
 - **Kotlin**
 - **common project** in local .m2 repository 
+- **config server project**
   - Environment variables
     * URI = web or local store of project properties
     * USER = store username credential
