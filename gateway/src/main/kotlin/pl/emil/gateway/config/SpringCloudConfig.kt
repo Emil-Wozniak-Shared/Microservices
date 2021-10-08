@@ -1,25 +1,39 @@
 package pl.emil.gateway.config
 
+import org.springframework.cloud.context.config.annotation.RefreshScope
 import org.springframework.cloud.gateway.route.builder.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import pl.emil.gateway.factory.HeaderGatewayFilterFactory
 import pl.emil.gateway.factory.HeaderGatewayFilterFactory.HeaderConfig
-import reactor.kotlin.core.publisher.toMono
+import java.util.concurrent.atomic.AtomicBoolean
 
 @Configuration
 class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
 
+    private val isWs: AtomicBoolean = AtomicBoolean(false)
+
     @Bean
+    @RefreshScope
     fun additionalRouteLocator(builder: RouteLocatorBuilder) =
         builder.routes {
-            endpoint("users") {
+            endpoint("users") {}
+            endpoint("posts") {}
+            route {
+                host(LOCALHOST) and path("/error/**")
+                uri(loadBalance("customers"))
+                filters {
+                    retry(8)
+                }
+                build()
             }
-            endpoint("posts") {
-            }
-            endpoint("customers") {
-                asyncPredicate {
-                    it.request.uri.path.contains("customers").toMono()
+            if (!isWs.get()) {
+                isWs.set(true)
+                endpoint("customers") {}
+            } else endpoint("customers", useWebSocket = true) {}
+            endpoint("error") {
+                filters {
+                    retry(6)
                 }
             }
             endpoint(
@@ -37,19 +51,21 @@ class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
         loadBalance: Boolean = true,
         subPaths: Boolean = true,
         rewritePath: Boolean = true,
-        init: PredicateSpec.() -> Unit
-    ) = this.route(id = id ?: "local-$endpoint", uri = if (loadBalance) endpoint.loadBalance() else endpoint) {
+        useWebSocket: Boolean = false,
+        init: PredicateSpec.() -> Unit,
+    ) = this.route(id = id ?: "local-$endpoint", uri = if (loadBalance) loadBalance(endpoint) else endpoint) {
         host(LOCALHOST) and path(if (subPaths) endpoint.withSubPaths() else endpoint)
         init.invoke(this)
         if (rewritePath) {
             filters {
-                rewritePath(endpoint.toSegmentRegex(), REPLACE_SEGMENT).filter(headerFactory.apply(HeaderConfig(API)))
+                if (useWebSocket) path("/ws/$endpoint")
+                else rewritePath(endpoint.toSegmentRegex(), REPLACE_SEGMENT).filter(headerFactory.apply(HeaderConfig(API)))
             }
         }
         build()
     }
 
-    private fun String.loadBalance() = "lb://$this"
+    private fun loadBalance(path: String) = "lb://$path"
     private fun String.toSegmentRegex() = "/$this(?<segment>/?.*)"
     private fun String.withSubPaths() = "/$this/**"
 }

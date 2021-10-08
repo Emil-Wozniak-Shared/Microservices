@@ -3,13 +3,15 @@ package pl.emil.customers.web
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.MediaType.TEXT_EVENT_STREAM
+import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
+import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.web.reactive.function.server.body
 import org.springframework.web.reactive.function.server.router
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.WebSocketHandler
 import pl.emil.customers.model.Customer
 import reactor.core.publisher.Flux
+import java.util.concurrent.atomic.AtomicInteger
 
 @Configuration
 class RouteConfig(private val mapper: ObjectMapper) {
@@ -18,10 +20,11 @@ class RouteConfig(private val mapper: ObjectMapper) {
     private fun from(customer: Customer): String? = mapper.writeValueAsString(customer)
 
     @Bean
-    fun webSocketAdapter(customers: Flux<Customer>): WebSocketHandler =
+    fun customerWsh(customers: Flux<Customer>): WebSocketHandler =
         WebSocketHandler { session ->
             session.send {
                 customers.map { customer ->
+                    println(customer.toString())
                     session.textMessage(from(customer) ?: "<null>")
                 }
             }
@@ -31,15 +34,40 @@ class RouteConfig(private val mapper: ObjectMapper) {
     fun simpleUrlHandlerMapping(customerWsh: WebSocketHandler) =
         SimpleUrlHandlerMapping(hashMapOf("/ws/customer" to customerWsh))
 
+    val countErrors = hashMapOf<String, AtomicInteger>()
+
     @Bean
     fun routes(customers: Flux<Customer>) = router {
+        "error".nest {
+            GET("{id}") {
+                val id = it.pathVariable("id")
+                val result = countResponse(id)?.get() ?: 0
+                if (result < 5) {
+                    status(SERVICE_UNAVAILABLE).build()
+                } else {
+                    ok().bodyValue(mapOf(
+                        "message" to "good job",
+                        id to ", you did it on try #${countErrors}"
+                    ))
+                }
+            }
+        }
         "api".nest {
             "customers".nest {
                 GET("") {
-                    ok().contentType(TEXT_EVENT_STREAM).body(customers)
+                    ok().contentType(APPLICATION_JSON).body(customers)
                 }
             }
         }
     }
+
+    private fun countResponse(id: String) =
+        countErrors.compute(id) { _, atomInt ->
+            if (null == atomInt) AtomicInteger(0)
+            else {
+                atomInt.incrementAndGet()
+                atomInt
+            }
+        }
 }
 

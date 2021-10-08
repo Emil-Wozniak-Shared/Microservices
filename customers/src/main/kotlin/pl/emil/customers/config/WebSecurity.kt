@@ -16,17 +16,10 @@ import org.springframework.security.web.server.SecurityWebFilterChain
 @EnableReactiveMethodSecurity
 class WebSecurity {
     @Bean
-    fun springWebFilterChain(
-        http: ServerHttpSecurity,
-    ): SecurityWebFilterChain = http
+    fun springWebFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain = http
         .apply {
-            addFilterAt(CorsFilter(), FIRST)
             authorizeExchange()
-                .pathMatchers("/api").permitAll()
-                .pathMatchers("/actuator/**").permitAll()
-                .pathMatchers("/oauth/token").permitAll()
-                .pathMatchers(GET, "/api/customers").permitAll()
-                .anyExchange().authenticated()
+                .anyExchange().permitAll()
             httpBasic().disable()
                 .formLogin().disable()
                 .csrf().disable()

@@ -19,6 +19,7 @@ spring:
 
 server:
   port: ${PORT:8060}
+
 eureka:
   instance:
     prefer-ip-address: true

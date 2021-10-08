@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Customers</title>
+    <script>
+    window.addEventListener('load', () => {
+        const ws = new WebSocket('ws://localhost:8180/customers/api/customers')
+        ws.addEventListener('message', (msg) => {
+            console.log(`new message: ${msg.data}`)
+            document.getElementById("content").innerHTML = "whatever";
+        })
+        ws.addEventListener('open', () => ws.send(''))
+    })
+    </script>
+</head>
+<body>
+<div>
+    <h1>Websockets</h1>
+    <h2>Driver by properties</h2>
+    <h4 id="content">no value</h4>
+</div>
+</body>
+</html>
