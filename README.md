@@ -1,5 +1,6 @@
 # Getting Started
 
+
 ## Requirement
 
 - **Gradle**
@@ -43,6 +44,8 @@ environment variables **DB_PORT**, **DB_USER** and / or **DB_PASS**. I provided 
 avoid conflicts on the ports.
 
 ## Project structure
+
+![diagram](./assets/Microservices.svg)
 
 Notice that Projects are not Modules
 
