@@ -47,36 +47,6 @@ avoid conflicts on the ports.
 
 ![diagram](./assets/Microservices.svg)
 
-Notice that Projects are not Modules
-
-- **common**:
-  - *PROJECT*
-  - provides common classes for others projects
-- **configserver**:
-  - *PROJECT*
-  - projects properties configuration project
-- **docker**:
-  - *DIR*
-  - docker images
-- **gateway**:
-  - *PROJECT*
-  - projects gateway
-- **gradle-addons**:
-  - *DIR*
-  - gradle common configurations
-- **http**:
-  - *DIR*
-  - sample http requests
-- **posts**:
-  - *PROJECT*
-  - sample api for users
-- **src**:
-  - *PROJECT*
-  - main module and discovery server
-- **users**:
-  - *PROJECT*
-  - user authentication and profile module
-
 ## Endpoints
 
 - **Eureka server**:  http://localhost:8010
@@ -215,3 +185,36 @@ In my store I use pattern:
 ┣ 📂 users
 ┃ ┗ 📜 application.yml
 </pre>
+
+
+## Folders description
+
+Notice that Projects are not Modules
+
+- **common**:
+  - *PROJECT*
+  - provides common classes for others projects
+- **configserver**:
+  - *PROJECT*
+  - projects properties configuration project
+- **docker**:
+  - *DIR*
+  - docker images
+- **gateway**:
+  - *PROJECT*
+  - projects gateway
+- **gradle-addons**:
+  - *DIR*
+  - gradle common configurations
+- **http**:
+  - *DIR*
+  - sample http requests
+- **posts**:
+  - *PROJECT*
+  - sample api for users
+- **src**:
+  - *PROJECT*
+  - main module and discovery server
+- **users**:
+  - *PROJECT*
+  - user authentication and profile module
