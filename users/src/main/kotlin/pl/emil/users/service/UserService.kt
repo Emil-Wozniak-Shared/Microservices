@@ -14,7 +14,7 @@ import pl.emil.users.repo.UserRepository
 import pl.emil.users.security.model.SecureUser
 import pl.emil.users.security.model.tokenize
 import pl.emil.users.security.token.JwtSigner
-import pl.emil.users.web.Token
+import pl.emil.users.model.Token
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers.boundedElastic

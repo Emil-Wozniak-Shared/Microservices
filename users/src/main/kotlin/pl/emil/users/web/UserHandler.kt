@@ -12,15 +12,13 @@ import org.springframework.web.reactive.function.server.body
 import pl.emil.common.web.*
 import pl.emil.users.config.*
 import pl.emil.users.config.exception.UserCreateException
+import pl.emil.users.model.Login
 import pl.emil.users.model.User
 import pl.emil.users.model.UserCredentials
 import pl.emil.users.security.token.JwtSigner
 import pl.emil.users.service.UserService
 import reactor.core.publisher.Mono
 import java.net.URI
-
-data class Login(val username: String)
-data class Token(val token: String, val expiresIn: Int)
 
 @Service
 class UserHandler(
