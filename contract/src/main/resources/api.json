@@ -2,11 +2,11 @@
   "openapi": "3.0.1",
   "info": {
     "title": "User API",
-    "description": "Demo API with 5 operations",
+    "description": "Users API",
     "version": "1.0"
   },
   "paths": {
-    "/users": {
+    "/api/users": {
       "get": {
         "tags": [
           "User"
@@ -59,7 +59,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewUserRequest"
+                "$ref": "#/components/schemas/User"
               }
             }
           }
@@ -101,7 +101,7 @@
         }
       }
     },
-    "/users/{userId}": {
+    "/api/users/{userId}": {
       "get": {
         "tags": [
           "User"
@@ -150,143 +150,6 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Delete user by ID",
-        "operationId": "deleteUserById",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "The user ID",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          }
-        }
-      },
-      "patch": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Update user by ID",
-        "operationId": "updateUserById",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "description": "The user ID",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewUserRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "500": {
-            "description": "Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "503": {
-            "description": "Service Unavailable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorResponse"
-                }
-              }
-            }
-          },
-          "204": {
-            "description": "No Content"
           },
           "400": {
             "description": "Bad Request",
@@ -389,18 +252,65 @@
           }
         }
       },
-      "NewUserRequest": {
+      "UserDTO": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "default": "",
+            "description": "user first name",
+            "minLength": 3
+          },
+          "lastName": {
+            "type": "string",
+            "default": "",
+            "description": "user last name",
+            "minLength": 3
+          },
+          "email": {
+            "type": "string",
+            "format": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+            "nullable": false,
+            "default": "",
+            "description": "user valid email"
+          }
+        }
+      },
+      "UserCredentials": {
         "required": [
           "email",
-          "name"
+          "password"
         ],
         "type": "object",
         "properties": {
-          "name": {
+          "password": {
             "type": "string"
           },
           "email": {
             "type": "string"
+          }
+        }
+      },
+      "Login": {
+        "required": [ "username" ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "user email"
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "authorization token value"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "description": "token lifetime"
           }
         }
       }

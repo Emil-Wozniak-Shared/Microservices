@@ -53,6 +53,7 @@ avoid conflicts on the ports.
 - **Spring Gateway**: http://localhost:8180
 - **Posts endpoint**: http://localhost:8020
 - **Users endpoint**: http://localhost:8040
+- **Customers endpoint**: http://localhost:8060
 
 - error prone
 
@@ -197,6 +198,9 @@ Notice that Projects are not Modules
 - **configserver**:
   - *PROJECT*
   - projects properties configuration project
+- **contract**
+  - *PROJECT*
+  - OpenApi models and endpoints 
 - **docker**:
   - *DIR*
   - docker images
@@ -218,3 +222,8 @@ Notice that Projects are not Modules
 - **users**:
   - *PROJECT*
   - user authentication and profile module
+
+## OpenAPI 
+I configure OpenAPi kotlin models and webflux endpoints **contract** project
+
+To generate them use `gradle openApiGenerate`
