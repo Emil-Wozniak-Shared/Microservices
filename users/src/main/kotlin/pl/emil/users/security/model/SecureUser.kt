@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import pl.emil.users.model.User
 import pl.emil.users.security.token.JwtSigner
-import pl.emil.users.web.Token
+import pl.emil.users.model.Token
 
 /**
  * inherits from UserDetails

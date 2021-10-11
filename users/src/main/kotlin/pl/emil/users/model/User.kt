@@ -1,15 +1,10 @@
 package pl.emil.users.model
 
-import org.springframework.core.env.Environment
 import org.springframework.data.annotation.Id
 import org.springframework.data.annotation.Version
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
-import org.springframework.security.core.userdetails.UserDetails
 import pl.emil.users.config.LocalDateTimeAdapter
-import pl.emil.users.security.token.JwtSigner
-import pl.emil.users.web.Token
-import reactor.core.publisher.Mono
 import java.time.LocalDateTime
 import java.util.*
 import javax.xml.bind.annotation.XmlRootElement

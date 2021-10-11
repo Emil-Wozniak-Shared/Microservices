@@ -1,0 +1,319 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "User API",
+    "description": "Users API",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/users": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get all users",
+        "operationId": "getAllUsers",
+        "responses": {
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Create user",
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get user by ID",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "The user ID",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Service Unavailable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ErrorResponse": {
+        "required": [
+          "status",
+          "title",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "details": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "User": {
+        "example": {
+          "firstName": "John",
+          "lastName": "Snow",
+          "email": "j.snow@test.pl",
+          "password": "12345678"
+        },
+        "description": "user entity",
+        "required": [
+          "firstName",
+          "lastName",
+          "password",
+          "email"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "default": null
+          },
+          "firstName": {
+            "type": "string",
+            "default": "",
+            "description": "user first name",
+            "minLength": 3
+          },
+          "lastName": {
+            "type": "string",
+            "default": "",
+            "description": "user last name",
+            "minLength": 3
+          },
+          "password": {
+            "type": "string",
+            "default": "",
+            "description": "valid password at least 8 characters\nat least 1 numeric character\nat least 1 lowercase letter\nat least 1 uppercase letter\nat least 1 special character",
+            "minLength": 8,
+            "format": "/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[^\\w\\s]).{8,}$/"
+          },
+          "email": {
+            "type": "string",
+            "format": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+            "nullable": false,
+            "default": "",
+            "description": "user valid email"
+          }
+        }
+      },
+      "UserDTO": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "default": "",
+            "description": "user first name",
+            "minLength": 3
+          },
+          "lastName": {
+            "type": "string",
+            "default": "",
+            "description": "user last name",
+            "minLength": 3
+          },
+          "email": {
+            "type": "string",
+            "format": "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])",
+            "nullable": false,
+            "default": "",
+            "description": "user valid email"
+          }
+        }
+      },
+      "UserCredentials": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      },
+      "Login": {
+        "required": [ "username" ],
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "description": "user email"
+          }
+        }
+      },
+      "Token": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "authorization token value"
+          },
+          "expiresIn": {
+            "type": "integer",
+            "description": "token lifetime"
+          }
+        }
+      }
+    }
+  }
+}

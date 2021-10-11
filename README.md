@@ -1,5 +1,6 @@
 # Getting Started
 
+
 ## Requirement
 
 - **Gradle**
@@ -44,35 +45,7 @@ avoid conflicts on the ports.
 
 ## Project structure
 
-Notice that Projects are not Modules
-
-- **common**:
-  - *PROJECT*
-  - provides common classes for others projects
-- **configserver**:
-  - *PROJECT*
-  - projects properties configuration project
-- **docker**:
-  - *DIR*
-  - docker images
-- **gateway**:
-  - *PROJECT*
-  - projects gateway
-- **gradle-addons**:
-  - *DIR*
-  - gradle common configurations
-- **http**:
-  - *DIR*
-  - sample http requests
-- **posts**:
-  - *PROJECT*
-  - sample api for users
-- **src**:
-  - *PROJECT*
-  - main module and discovery server
-- **users**:
-  - *PROJECT*
-  - user authentication and profile module
+![diagram](./assets/Microservices.svg)
 
 ## Endpoints
 
@@ -80,6 +53,7 @@ Notice that Projects are not Modules
 - **Spring Gateway**: http://localhost:8180
 - **Posts endpoint**: http://localhost:8020
 - **Users endpoint**: http://localhost:8040
+- **Customers endpoint**: http://localhost:8060
 
 - error prone
 
@@ -212,3 +186,44 @@ In my store I use pattern:
 ┣ 📂 users
 ┃ ┗ 📜 application.yml
 </pre>
+
+
+## Folders description
+
+Notice that Projects are not Modules
+
+- **common**:
+  - *PROJECT*
+  - provides common classes for others projects
+- **configserver**:
+  - *PROJECT*
+  - projects properties configuration project
+- **contract**
+  - *PROJECT*
+  - OpenApi models and endpoints 
+- **docker**:
+  - *DIR*
+  - docker images
+- **gateway**:
+  - *PROJECT*
+  - projects gateway
+- **gradle-addons**:
+  - *DIR*
+  - gradle common configurations
+- **http**:
+  - *DIR*
+  - sample http requests
+- **posts**:
+  - *PROJECT*
+  - sample api for users
+- **src**:
+  - *PROJECT*
+  - main module and discovery server
+- **users**:
+  - *PROJECT*
+  - user authentication and profile module
+
+## OpenAPI 
+I configure OpenAPi kotlin models and webflux endpoints **contract** project
+
+To generate them use `gradle openApiGenerate`

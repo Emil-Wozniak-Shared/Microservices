@@ -7,7 +7,8 @@ import java.net.InetAddress.getLocalHost
 
 @Component
 class StartLogger(private val env: Environment) {
-    fun write() {
+    fun write(others: (environment: Environment) -> String?) {
+        others.invoke(env)
         println(
             """
             ______________________________________________________
@@ -22,5 +23,5 @@ class StartLogger(private val env: Environment) {
     }
 }
 
-fun ConfigurableApplicationContext.thenLog() = (this.getBean("startLogger") as StartLogger).write()
+fun ConfigurableApplicationContext.thenLog() = (this.getBean("startLogger") as StartLogger).write { "" }
 
