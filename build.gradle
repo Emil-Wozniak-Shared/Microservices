@@ -37,9 +37,18 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     }
 }
 
-tasks.configureEach {
-    if (it.name == 'addCommon') {
-        it.buildFile = './common/build.gradle'
+task addCommon(type: GradleBuild) {
+    doLast {
+        println 'Done'
     }
+    println ">> Add common"
+    println "  * Create project common"
+    buildFile './common/build.gradle'
+    tasks = ['publishToMavenLocal']
+
+    println ">> Add Contract"
+    println "  * Create project contract"
+    buildFile './contract/build.gradle'
+    tasks = ['createApiAndPublish']
 }
 

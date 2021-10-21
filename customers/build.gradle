@@ -1,3 +1,5 @@
+import org.gradle.api.tasks.GradleBuild
+
 buildscript {
     repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
     dependencies {
@@ -46,4 +48,14 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
         freeCompilerArgs = ["-Xjsr305=strict"]
         jvmTarget = "11"
     }
+}
+
+task addCommon(type: GradleBuild) {
+    doLast {
+        println 'Done'
+    }
+    println "Add common"
+    println "Create project common"
+    buildFile '../common/build.gradle'
+    tasks = ['publishToMavenLocal']
 }

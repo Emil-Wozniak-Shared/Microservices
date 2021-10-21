@@ -26,15 +26,6 @@ dependencyManagement {
     }
 }
 
-task addCommon(type: GradleBuild) {
-    doLast {
-        println 'Done'
-    }
-    println "Add common"
-    println "Create project common"
-    buildFile '../common/build.gradle'
-    tasks = ['publishToMavenLocal']
-}
 
 
 
