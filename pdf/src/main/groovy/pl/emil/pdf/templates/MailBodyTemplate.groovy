@@ -1,93 +1,106 @@
 package pl.emil.pdf.templates
 
 import groovy.xml.MarkupBuilder
+import org.springframework.core.io.ClassPathResource
+import pl.emil.pdf.dto.NameDto
+import pl.emil.pdf.dto.UserDto
+
+import java.nio.file.Files
+import java.nio.file.Path
 
 class MailBodyTemplate {
     private static def writer = new StringWriter()
 
     static String createTemplate(Map<String, Object> models) {
-        def list = models.get("objects") as List<String>
+        def names = models.get("objects") as List<NameDto>
+        def users = models.get("users") as List<UserDto>
         def html = new MarkupBuilder(writer)
+        def customStyle = Files.readAllLines(Path.of(new ClassPathResource("styles/user-table.css").file.toURI()))
+        def dStyles = Files.readAllLines(Path.of(new ClassPathResource("styles/default-table.css").file.toURI()))
         html.html {
             head {
                 meta('http-equiv': "Content-Type", content: 'text/html; charset=iso-8859-1')
-                style(type: 'text/css',
-                        """
-        .tg {
-            border-collapse: collapse;
-            border-color: #93a1a1;
-            border-spacing: 0;
-        }
-
-        .tg td {
-            background-color: #fdf6e3;
-            border-color: #93a1a1;
-            border-style: solid;
-            border-width: 1px;
-            color: #002b36;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            overflow: hidden;
-            padding: 10px 5px;
-            word-break: normal;
-        }
-
-        .tg th {
-            background-color: #657b83;
-            border-color: #93a1a1;
-            border-style: solid;
-            border-width: 1px;
-            color: #fdf6e3;
-            font-family: Arial, sans-serif;
-            font-size: 14px;
-            font-weight: normal;
-            overflow: hidden;
-            padding: 10px 5px;
-            word-break: normal;
-        }
-
-        .tg .tg-0pky {
-            border-color: inherit;
-            text-align: left;
-            vertical-align: top
-        }
-        """)
+                //noinspection CssUnknownProperty
+                style(type: 'text/css', """
+               table {
+                    -fs-table-paginate: paginate;
+                    border-spacing: 0;
+                }
+                ${dStyles.join("\n")}
+                
+                ${customStyle.join("\n")}
+        
+                """
+                )
                 title 'Constructed by MarkupBuilder'
             }
             body {
-                div(style: 'direction: ltr;font-family: Tacoma;color: #000000;font-size: 10pt;') {
+                div(style: 'font-family: Tacoma;color: #000000;font-size: 10pt;') {
                     div(style: 'font-family: Times New Roman,serif; color: #000000; font-size: 16px') {
                         div {
-                            div(dir: 'ltr') {
-                                div('class': 'gmail_quote')
-                                br()
-                                br()
+                            div {
                                 div {
                                     div(style: "clear:both; padding-top:4em") {
-                                        div(style: "padding-top:2em", "Thank you for shopping at our company. ")
-                                        div(style: "padding-top:1em", " Below you can find the attached details. ")
+                                        h1(style: "padding-top:2em", "Thank you for shopping at our company. ")
+                                        h2(style: "padding-top:1em", " Below you can find the attached details. ")
                                         div(style: "padding-top:1em", " Adobe Reader is required to view PDF files. This is a free\n" +
                                                 "                                program available from the") {
                                             a(href: "https://get.adobe.com/reader/", target: "_blank", "Adobe website")
                                         }
-                                        hr()
+                                        hr(style: 'width: 200px;')
                                         div(style: "color:#808080; padding-top:2em; font-size:80%", "Have a nice day!")
                                     }
                                 }
-                                table('class': 'tg') {
+                                br()
+                                p(style: 'font-size: 12px;', "paragraph 12")
+                                p(style: 'font-size: 14px;', "paragraph 14")
+                                br()
+                                table('class': 'customTable') {
                                     thead {
                                         tr {
-                                            th()
                                             th("id")
-                                            th("name")
+                                            th("first name")
+                                            th("last name")
+                                            th("email")
+                                            th("karma")
+                                            th("created at")
                                         }
                                     }
                                     tbody {
-                                        list.eachWithIndex { row, index ->
+                                        users.eachWithIndex { user, index ->
                                             tr {
-                                                td()
                                                 td(index)
-                                                td(row)
+                                                td(user.firstName)
+                                                td(user.lastName)
+                                                td(user.email)
+                                                td(user.karma)
+                                                td(user.createdAt)
+                                            }
+                                        }
+                                    }
+                                }
+                                hr()
+                                br()
+                                table('class': 'tg') {
+                                    thead {
+                                        tr {
+                                            th("id")
+                                            th("surname")
+                                            th("approximate")
+                                            th("number")
+                                            th("freq.")
+                                            th("letters")
+                                        }
+                                    }
+                                    tbody {
+                                        names.eachWithIndex { row, index ->
+                                            tr {
+                                                td(index)
+                                                td(row.surname)
+                                                td(row.approximate)
+                                                td(row.number)
+                                                td(row.frequency)
+                                                td(row.surname.length())
                                             }
                                         }
                                     }
@@ -100,7 +113,6 @@ class MailBodyTemplate {
 
             }
         }
-        print writer.toString()
         return writer.toString()
     }
 }
