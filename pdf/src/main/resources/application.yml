@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: pdf
+server:
+  port: 8080

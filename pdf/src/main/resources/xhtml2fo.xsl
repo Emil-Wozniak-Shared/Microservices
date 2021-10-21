@@ -1,16 +1,24 @@
 <?xml version="1.0" ?>
-<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:fo="http://www.w3.org/1999/XSL/Format"
-                xmlns:xhtml="http://www.w3.org/1999/xhtml"
-                exclude-result-prefixes="xhtml"
-                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                xsi:schemaLocation="http://www.w3.org/1999/XSL/Format ">
-    <xsl:output method="xml" version="1.0" standalone="yes" omit-xml-declaration="yes"
-                encoding="utf-8" media-type="text/xml" indent="yes"/>
+<xsl:stylesheet
+        version="1.0"
+        xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+        xmlns:styles="http://www.w3.org/1999/XSL/Format"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        exclude-result-prefixes="xhtml"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.w3.org/1999/XSL/Format ">
+    <xsl:output
+            method="xml" version="1.0"
+            standalone="yes"
+            omit-xml-declaration="yes"
+            encoding="utf-8"
+            media-type="text/xml"
+            indent="yes"/>
     <xsl:strip-space elements="*"/>
-    <xsl:preserve-space elements="xhtml:listing listing xhtml:plaintext plaintext xhtml:pre pre xhtml:samp samp"/>
-    <xsl:param name="font-size" select="''"/>
-    <xsl:param name="font.symbol" select="'Arial Unicode MS'"/>
+    <xsl:preserve-space
+            elements="xhtml:listing listing xhtml:plaintext plaintext xhtml:pre pre xhtml:samp samp"/>
+    <xsl:param name="font-size" select="'12px'"/>
+    <xsl:param name="font.symbol" select="'Helvetica'"/>
 
     <xsl:template name="common-atts">
         <xsl:copy-of select="@id|@color|@height|@width|@xml:lang"/>
@@ -25,39 +33,44 @@
     </xsl:template>
 
     <xsl:template match="xhtml:html|html">
-        <fo:root>
-            <fo:layout-master-set>
-                <fo:simple-page-master master-name="page">
-                    <fo:region-body margin=".75in .75in .75in .75in"/>
-                    <fo:region-before extent=".5in"/>
-                    <fo:region-after extent=".5in"/>
-                </fo:simple-page-master>
-            </fo:layout-master-set>
-            <fo:page-sequence master-reference="page">
-                <fo:static-content flow-name="xsl-region-before">
-                    <fo:block display-align="after" padding-before=".2in" text-align="center" font-size="9pt">
+        <styles:root>
+            <styles:layout-master-set>
+                <styles:simple-page-master master-name="page">
+                    <styles:region-body margin=".75in .75in .75in .75in"/>
+                    <styles:region-before extent=".5in"/>
+                    <styles:region-after extent=".5in"/>
+                </styles:simple-page-master>
+            </styles:layout-master-set>
+            <styles:page-sequence master-reference="page">
+                <styles:static-content flow-name="xsl-region-before">
+                    <styles:block display-align="after" padding-before=".2in" text-align="center" font-size="9pt">
                         <xsl:apply-templates select="xhtml:head/xhtml:title|head/title"/>
-                    </fo:block>
-                </fo:static-content>
-                <fo:static-content flow-name="xsl-region-after">
-                    <fo:block display-align="before" text-align="center" font-size="8pt">
+                    </styles:block>
+                </styles:static-content>
+                <styles:static-content flow-name="xsl-region-after">
+                    <styles:block display-align="before" text-align="center" font-size="8pt">
                         <xsl:text>page </xsl:text>
-                        <fo:page-number/>
+                        <styles:page-number/>
                         <xsl:text> of </xsl:text>
-                        <fo:page-number-citation ref-id="__END__"/>
-                    </fo:block>
-                </fo:static-content>
+                        <styles:page-number-citation ref-id="__END__"/>
+                    </styles:block>
+                </styles:static-content>
                 <xsl:apply-templates/>
-            </fo:page-sequence>
-        </fo:root>
+            </styles:page-sequence>
+        </styles:root>
+    </xsl:template>
+
+    <xsl:template match="br">
+        <br/>
     </xsl:template>
 
     <xsl:template match="xhtml:title|title">
-        <fo:block>
+        <styles:block>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
+
 
     <xsl:template match="xhtml:basefont|basefont">
         <xsl:copy-of select="@color"/>
@@ -92,7 +105,7 @@
     </xsl:template>
 
     <xsl:template match="xhtml:body|body">
-        <fo:flow flow-name="xsl-region-body">
+        <styles:flow flow-name="xsl-region-body">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates select="//basefont[1]"/>
             <xsl:if test="$font-size">
@@ -101,11 +114,11 @@
                 </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
-            <fo:block id="__END__"/>
-        </fo:flow>
+            <styles:block id="__END__"/>
+        </styles:flow>
     </xsl:template>
 
-    <xsl:template match="xhtml:head|head|xhtml:applet|applet|xhtml:area|area|xhtml:base|base
+    <xsl:template match="xhtml:br|br|xhtml:head|head|xhtml:applet|applet|xhtml:area|area|xhtml:base|base
   |xhtml:bgsound|bgsound|xhtml:embed|embed|xhtml:frame|frame|xhtml:frameset|frameset|xhtml:iframe|iframe
   |xhtml:ilayer|ilayer|xhtml:layer|layer|xhtml:input[@type='hidden']|input[@type='hidden']
   |xhtml:isindex|isindex|xhtml:link|link|xhtml:map|map|xhtml:meta|meta|xhtml:object|object|xhtml:param|param
@@ -123,7 +136,7 @@
     <!-- Links and Media -->
 
     <xsl:template match="xhtml:a|a">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:if test="@name and not(@id)">
                 <xsl:attribute name="id">
@@ -131,11 +144,11 @@
                 </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:a[@href]|a[@href]">
-        <fo:basic-link color="blue" text-decoration="underline">
+        <styles:basic-link color="blue" text-decoration="underline">
             <xsl:if test="@type">
                 <xsl:attribute name="content-type">
                     <xsl:value-of select="@type"/>
@@ -157,37 +170,39 @@
             </xsl:choose>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:basic-link>
+        </styles:basic-link>
     </xsl:template>
 
     <xsl:template match="xhtml:img|img|xhtml:input[@type='image']|input[@type='image']">
-        <fo:external-graphic content-type="{@type}" src="{concat(//base/@href,@src)}">
+        <styles:external-graphic content-type="{@type}" src="{concat(//base/@href,@src)}">
             <xsl:call-template name="common-atts"/>
-        </fo:external-graphic>
+        </styles:external-graphic>
     </xsl:template>
 
     <xsl:template match="xhtml:object[starts-with(@type,'image/')]|object[starts-with(@type,'image/')]">
-        <fo:external-graphic content-type="{@type}" src="{concat(//base/@href,@data)}">
+        <styles:external-graphic content-type="{@type}" src="{concat(//base/@href,@data)}">
             <xsl:call-template name="common-atts"/>
-        </fo:external-graphic>
+        </styles:external-graphic>
     </xsl:template>
 
     <!-- Tables -->
-    <fo:table table-layout="fixed" width="100%">
-        <fo:table-header> (unchanged) </fo:table-header>
-        <fo:table-body>
+    <styles:table table-layout="fixed" width="100%">
+        <styles:table-header>(unchanged)</styles:table-header>
+        <styles:table-body>
             <xsl:if test="list/v">
-                <xsl:apply-templates select="list/v" />
+                <xsl:apply-templates select="list/v"/>
             </xsl:if>
             <xsl:if test="not(list/v)">
-                <fo:table-cell><fo:block /></fo:table-cell>
+                <styles:table-cell>
+                    <styles:block/>
+                </styles:table-cell>
             </xsl:if>
-        </fo:table-body>
-    </fo:table>
+        </styles:table-body>
+    </styles:table>
 
     <xsl:template match="xhtml:table">
         <xsl:apply-templates select="caption"/>
-        <fo:table width="100%" table-layout="fixed">
+        <styles:table width="100%" table-layout="fixed">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates select="colgroup|col"/>
             <xsl:variable name="tr1"
@@ -199,17 +214,17 @@
             </xsl:call-template>
             <xsl:apply-templates select="xhtml:thead|xhtml:tfoot|xhtml:tbody"/>
             <xsl:if test="xhtml:tr">
-                <fo:table-body>
+                <styles:table-body>
                     <xsl:call-template name="common-atts"/>
                     <xsl:apply-templates select="xhtml:tr"/>
-                </fo:table-body>
+                </styles:table-body>
             </xsl:if>
-        </fo:table>
+        </styles:table>
     </xsl:template>
 
     <xsl:template match="table">
         <xsl:apply-templates select="caption"/>
-        <fo:table width="100%">
+        <styles:table width="100%">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates select="colgroup|col"/>
             <xsl:variable name="tr1" select="(tr|thead/tr|tbody/tr|tfoot/tr)[1]"/>
@@ -220,12 +235,12 @@
             </xsl:call-template>
             <xsl:apply-templates select="thead|tfoot|tbody"/>
             <xsl:if test="tr">
-                <fo:table-body>
+                <styles:table-body>
                     <xsl:call-template name="common-atts"/>
                     <xsl:apply-templates select="tr"/>
-                </fo:table-body>
+                </styles:table-body>
             </xsl:if>
-        </fo:table>
+        </styles:table>
     </xsl:template>
 
     <xsl:template match="xhtml:colgroup|colgroup">
@@ -235,7 +250,6 @@
     <xsl:template name="mock-col">
         <xsl:param name="cols" select="1"/>
         <xsl:if test="$cols&gt;0">
-            <fo:table-column column-width="proportional-column-width(1)"/>
             <xsl:call-template name="mock-col">
                 <xsl:with-param name="cols" select="$cols -1"/>
             </xsl:call-template>
@@ -243,7 +257,7 @@
     </xsl:template>
 
     <xsl:template match="xhtml:col|col">
-        <fo:table-column>
+        <styles:table-column>
             <xsl:call-template name="common-atts"/>
             <xsl:if test="@span">
                 <xsl:attribute name="number-columns-spanned">
@@ -260,39 +274,39 @@
                     <xsl:attribute name="column-width">proportional-column-width(1)</xsl:attribute>
                 </xsl:otherwise>
             </xsl:choose>
-        </fo:table-column>
+        </styles:table-column>
     </xsl:template>
 
     <xsl:template match="xhtml:tbody|tbody">
-        <fo:table-body>
+        <styles:table-body>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:table-body>
+        </styles:table-body>
     </xsl:template>
 
     <xsl:template match="xhtml:thead|thead">
-        <fo:table-header>
+        <styles:table-header>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:table-header>
+        </styles:table-header>
     </xsl:template>
 
     <xsl:template match="xhtml:tfoot|tfoot">
-        <fo:table-footer>
+        <styles:table-footer>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:table-footer>
+        </styles:table-footer>
     </xsl:template>
 
     <xsl:template match="xhtml:tr|tr">
-        <fo:table-row>
+        <styles:table-row>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:table-row>
+        </styles:table-row>
     </xsl:template>
 
     <xsl:template match="xhtml:th|th">
-        <fo:table-cell font-weight="bold" padding=".1em">
+        <styles:table-cell font-weight="bold" padding=".1em">
             <xsl:call-template name="common-atts"/>
             <xsl:if test="@colspan">
                 <xsl:attribute name="number-columns-spanned">
@@ -304,17 +318,17 @@
                     <xsl:value-of select="@rowspan"/>
                 </xsl:attribute>
             </xsl:if>
-            <fo:block>
+            <styles:block>
                 <xsl:if test="parent::xhtml:tr/parent::xhtml:thead|parent::tr/parent::thead">
                     <xsl:attribute name="text-align">center</xsl:attribute>
                 </xsl:if>
                 <xsl:apply-templates/>
-            </fo:block>
-        </fo:table-cell>
+            </styles:block>
+        </styles:table-cell>
     </xsl:template>
 
     <xsl:template match="xhtml:td|td">
-        <fo:table-cell padding=".1em">
+        <styles:table-cell padding=".1em">
             <xsl:call-template name="common-atts"/>
             <xsl:if test="@colspan">
                 <xsl:attribute name="number-columns-spanned">
@@ -326,62 +340,63 @@
                     <xsl:value-of select="@rowspan"/>
                 </xsl:attribute>
             </xsl:if>
-            <fo:block>
+            <styles:block>
                 <xsl:apply-templates/>
-            </fo:block>
-        </fo:table-cell>
+            </styles:block>
+        </styles:table-cell>
     </xsl:template>
 
     <!-- Lists -->
 
     <xsl:template match="xhtml:dd|dd">
-        <fo:list-item>
+        <styles:list-item>
             <xsl:call-template name="common-atts"/>
-            <fo:list-item-label>
-                <fo:block/>
-            </fo:list-item-label>
-            <fo:list-item-body start-indent="body-start()">
-                <fo:block>
+            <styles:list-item-label>
+                <styles:block/>
+            </styles:list-item-label>
+            <styles:list-item-body start-indent="body-start()">
+                <styles:block>
                     <xsl:apply-templates/>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
+                </styles:block>
+            </styles:list-item-body>
+        </styles:list-item>
     </xsl:template>
 
     <xsl:template match="xhtml:dl|dl">
-        <fo:list-block provisional-label-separation=".2em" provisional-distance-between-starts="3em">
+        <styles:list-block provisional-label-separation=".2em" provisional-distance-between-starts="3em">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:list-block>
+        </styles:list-block>
     </xsl:template>
 
     <xsl:template match="xhtml:dt|dt">
-        <fo:list-item>
+        <styles:list-item>
             <xsl:call-template name="common-atts"/>
-            <fo:list-item-label>
-                <fo:block/>
-            </fo:list-item-label>
-            <fo:list-item-body start-indent="body-start()">
-                <fo:block>
+            <styles:list-item-label>
+                <styles:block/>
+            </styles:list-item-label>
+            <styles:list-item-body start-indent="body-start()">
+                <styles:block>
                     <xsl:apply-templates/>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
+                </styles:block>
+            </styles:list-item-body>
+        </styles:list-item>
     </xsl:template>
 
     <xsl:template match="xhtml:ol|ol">
-        <fo:list-block provisional-label-separation=".2em"
-                       provisional-distance-between-starts="{string-length(count(li))*.9+.6}em">
+        <styles:list-block
+                provisional-label-separation=".2em"
+                provisional-distance-between-starts="{string-length(count(li))*.9+.6}em">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:list-block>
+        </styles:list-block>
     </xsl:template>
 
     <xsl:template match="xhtml:ol/xhtml:li|ol/li">
-        <fo:list-item>
+        <styles:list-item>
             <xsl:call-template name="common-atts"/>
-            <fo:list-item-label end-indent="label-end()">
-                <fo:block text-align="end">
+            <styles:list-item-label end-indent="label-end()">
+                <styles:block text-align="end">
                     <xsl:variable name="value">
                         <xsl:choose>
                             <xsl:when test="@value">
@@ -422,29 +437,29 @@
                         </xsl:otherwise>
                     </xsl:choose>
                     <xsl:text>.</xsl:text>
-                </fo:block>
-            </fo:list-item-label>
-            <fo:list-item-body start-indent="body-start()">
-                <fo:block>
+                </styles:block>
+            </styles:list-item-label>
+            <styles:list-item-body start-indent="body-start()">
+                <styles:block>
                     <xsl:apply-templates/>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
+                </styles:block>
+            </styles:list-item-body>
+        </styles:list-item>
     </xsl:template>
 
     <xsl:template match="xhtml:ul|ul|xhtml:menu|menu">
-        <fo:list-block provisional-label-separation=".2em" provisional-distance-between-starts="1.6em">
+        <styles:list-block provisional-label-separation=".2em" provisional-distance-between-starts="1.6em">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:list-block>
+        </styles:list-block>
     </xsl:template>
 
     <xsl:template match="xhtml:ul/xhtml:li|ul/li|xhtml:menu/xhtml:li|menu/li">
-        <fo:list-item>
+        <styles:list-item>
             <xsl:call-template name="common-atts"/>
-            <fo:list-item-label end-indent="label-end()">
-                <fo:block text-align="end">
-                    <fo:inline font-family="{$font.symbol}">
+            <styles:list-item-label end-indent="label-end()">
+                <styles:block text-align="end">
+                    <styles:inline font-family="{$font.symbol}">
                         <xsl:choose>
                             <xsl:when test="@type='square'">
                                 <xsl:text disable-output-escaping="yes">&amp;#x25AA;</xsl:text>
@@ -462,190 +477,193 @@
                                 <xsl:text disable-output-escaping="yes">&amp;#x2022;</xsl:text>
                             </xsl:otherwise>
                         </xsl:choose>
-                    </fo:inline>
-                </fo:block>
-            </fo:list-item-label>
-            <fo:list-item-body start-indent="body-start()">
-                <fo:block>
+                    </styles:inline>
+                </styles:block>
+            </styles:list-item-label>
+            <styles:list-item-body start-indent="body-start()">
+                <styles:block>
                     <xsl:apply-templates/>
-                </fo:block>
-            </fo:list-item-body>
-        </fo:list-item>
+                </styles:block>
+            </styles:list-item-body>
+        </styles:list-item>
     </xsl:template>
 
     <!-- Blocks -->
 
     <xsl:template match="xhtml:address|address">
-        <fo:block font-style="italic">
+        <styles:block font-style="italic">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:blockquote|blockquote">
-        <fo:block space-before="1em" space-after="1em" start-indent="3em" end-indent="3em">
+        <styles:block
+                space-before="1em"
+                space-after="1em" start-indent="3em"
+                end-indent="3em">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:br|br">
-        <fo:block white-space="pre">
+        <styles:block white-space="pre">
             <xsl:call-template name="common-atts"/>
-            <xsl:text disable-output-escaping="yes">&amp;#10;</xsl:text>
-        </fo:block>
+            <xsl:text disable-output-escaping="yes"> </xsl:text>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:caption|caption">
-        <fo:block keep-with-next="always" text-align="center">
+        <styles:block keep-with-next="always" text-align="center">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:center|center">
-        <fo:block text-align="center">
+        <styles:block text-align="center">
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:div|div|xhtml:multicol|multicol|xhtml:noembed|noembed|xhtml:noframes|noframes
   |xhtml:nolayer|nolayer|xhtml:noscript|noscript">
-        <fo:block>
+        <styles:block>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h1|h1">
-        <fo:block font-size="180%" font-weight="bold">
+        <styles:block font-size="180%" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h2|h2">
-        <fo:block font-size="160%" font-weight="bold">
+        <styles:block font-size="160%" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h3|h3">
-        <fo:block font-size="140%" font-weight="bold">
+        <styles:block font-size="140%" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h4|h4">
-        <fo:block font-size="120%" font-weight="bold">
+        <styles:block font-size="120%" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h5|h5">
-        <fo:block font-size="110%" font-weight="bold">
+        <styles:block font-size="110%" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:h6|h6|xhtml:legend|legend">
-        <fo:block font-weight="bold">
+        <styles:block font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:hr|hr">
-        <fo:leader leader-pattern="rule" rule-style="groove">
+        <styles:leader leader-pattern="rule" rule-style="groove">
             <xsl:if test="@size">
                 <xsl:attribute name="rule-thickness">
                     <xsl:value-of select="@size"/><xsl:text>pt</xsl:text>
                 </xsl:attribute>
             </xsl:if>
-        </fo:leader>
+        </styles:leader>
     </xsl:template>
 
     <xsl:template match="xhtml:listing|listing|xhtml:plaintext|plaintext|xhtml:pre|pre|xhtml:samp|samp">
-        <fo:block white-space="pre">
+        <styles:block white-space="pre">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:p|p">
-        <fo:block space-before=".6em" space-after=".6em">
+        <styles:block space-before=".6em" space-after=".6em">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <!-- Inlines -->
 
     <xsl:template match="xhtml:abbr|abbr|xhtml:acronym|acronym">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
         <xsl:text> (</xsl:text>
         <xsl:value-of select="@title"/>
         <xsl:text>)</xsl:text>
     </xsl:template>
 
     <xsl:template match="xhtml:b|b|xhtml:strong|strong">
-        <fo:inline font-weight="bold">
+        <styles:inline font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:bdo|bdo">
-        <fo:bidi-override direction="{@dir}">
+        <styles:bidi-override direction="{@dir}">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:bidi-override>
+        </styles:bidi-override>
     </xsl:template>
 
     <xsl:template match="xhtml:big|big">
-        <fo:inline font-size="larger">
+        <styles:inline font-size="larger">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:blink|blink|xhtml:marquee|marquee">
-        <fo:inline background-color="yellow">
+        <styles:inline background-color="yellow">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:cite|cite|xhtml:dfn|dfn|xhtml:em|em|xhtml:i|i|xhtml:var|var">
-        <fo:inline font-style="italic">
+        <styles:inline font-style="italic">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:code|code|xhtml:kbd|kbd|xhtml:tt|tt">
-        <fo:inline font-family="monospace">
+        <styles:inline font-family="monospace">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:del|del|xhtml:s|s|xhtml:strike|strike">
-        <fo:inline text-decoration="line-through">
+        <styles:inline text-decoration="line-through">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:font|font">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:choose>
                 <xsl:when test="@size=1">
@@ -676,94 +694,94 @@
                 </xsl:attribute>
             </xsl:if>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:ins|ins|xhtml:u|u">
-        <fo:inline text-decoration="underline">
+        <styles:inline text-decoration="underline">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:nowrap|nowrap">
-        <fo:inline wrap-option="no-wrap">
+        <styles:inline wrap-option="no-wrap">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:q|q">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:text disable-output-escaping="yes">&amp;#x201C;</xsl:text>
             <xsl:apply-templates/>
             <xsl:text disable-output-escaping="yes">&amp;#x201D;</xsl:text>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:q|q[starts-with(.,'&#x22;') or starts-with(.,'&#x201C;') or starts-with(.,'&#x201F;')]">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:small|small">
-        <fo:inline font-size="smaller">
+        <styles:inline font-size="smaller">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:span|span">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:sub|sub">
-        <fo:inline baseline-shift="sub">
+        <styles:inline baseline-shift="sub">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:sup|sup">
-        <fo:inline baseline-shift="super">
+        <styles:inline baseline-shift="super">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <!-- Forms -->
 
     <xsl:template match="xhtml:button|button">
-        <fo:block background-color="silver" border="3pt outset silver" text-align="center" width="auto">
+        <styles:block background-color="silver" border="3pt outset silver" text-align="center" width="auto">
             <xsl:call-template name="common-atts"/>
             <xsl:text> </xsl:text>
             <xsl:apply-templates/>
             <xsl:text> </xsl:text>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:fieldset|fieldset">
-        <fo:block border="1pt groove gray">
+        <styles:block border="1pt groove gray">
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:form|form">
-        <fo:block>
+        <styles:block>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:input|input"><!-- default input is text (also handles password & file) -->
-        <fo:leader leader-pattern="rule">
+        <styles:leader leader-pattern="rule">
             <xsl:call-template name="common-atts"/>
             <xsl:attribute name="leader-length">
                 <xsl:choose>
@@ -773,11 +791,11 @@
                     <xsl:otherwise>10em</xsl:otherwise>
                 </xsl:choose>
             </xsl:attribute>
-        </fo:leader>
+        </styles:leader>
     </xsl:template>
 
     <xsl:template match="xhtml:input[@type='checkbox']|input[@type='checkbox']">
-        <fo:inline font-family="{$font.symbol}" font-size="larger">
+        <styles:inline font-family="{$font.symbol}" font-size="larger">
             <xsl:call-template name="common-atts"/>
             <xsl:choose>
                 <xsl:when test="@checked">
@@ -787,11 +805,11 @@
                     <xsl:text disable-output-escaping="yes">&amp;#x2610;</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:input[@type='radio']|input[@type='radio']">
-        <fo:inline font-family="{$font.symbol}" font-size="larger">
+        <styles:inline font-family="{$font.symbol}" font-size="larger">
             <xsl:call-template name="common-atts"/>
             <xsl:choose>
                 <xsl:when test="@checked">
@@ -801,12 +819,12 @@
                     <xsl:text disable-output-escaping="yes">&amp;#x25CB;</xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:input[@type='button' or @type='submit' or @type='reset']
   |input[@type='button' or @type='submit' or @type='reset']">
-        <fo:block background-color="silver" border="3pt outset silver" text-align="center" width="auto">
+        <styles:block background-color="silver" border="3pt outset silver" text-align="center" width="auto">
             <xsl:call-template name="common-atts"/>
             <xsl:text> </xsl:text>
             <xsl:choose>
@@ -818,43 +836,43 @@
                 </xsl:otherwise>
             </xsl:choose>
             <xsl:text> </xsl:text>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:label|label">
-        <fo:inline>
+        <styles:inline>
             <xsl:call-template name="common-atts"/>
             <xsl:apply-templates/>
-        </fo:inline>
+        </styles:inline>
     </xsl:template>
 
     <xsl:template match="xhtml:select[@size=1]|select[@size=1]">
-        <fo:leader leader-pattern="rule" leader-length="10em">
+        <styles:leader leader-pattern="rule" leader-length="10em">
             <xsl:call-template name="common-atts"/>
-        </fo:leader>
+        </styles:leader>
     </xsl:template>
 
     <xsl:template match="xhtml:select|select">
-        <fo:block>
+        <styles:block>
             <xsl:call-template name="common-atts"/>
             <xsl:if test="@size">
                 <xsl:attribute name="height">
                     <xsl:value-of select="@size"/><xsl:text>em</xsl:text>
                 </xsl:attribute>
             </xsl:if>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:optgroup|optgroup">
-        <fo:block font-style="italic" font-weight="bold">
+        <styles:block font-style="italic" font-weight="bold">
             <xsl:call-template name="common-atts"/>
             <xsl:value-of select="@label"/>
-        </fo:block>
+        </styles:block>
         <xsl:apply-templates/>
     </xsl:template>
 
     <xsl:template match="xhtml:option|option">
-        <fo:block>
+        <styles:block>
             <xsl:call-template name="common-atts"/>
             <xsl:if test="parent::xhtml:optgroup|parent::optgroup">
                 <xsl:attribute name="start-indent">1em</xsl:attribute>
@@ -867,11 +885,11 @@
                     <xsl:apply-templates/>
                 </xsl:otherwise>
             </xsl:choose>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
     <xsl:template match="xhtml:textarea|textarea">
-        <fo:block border="2pt inset silver" height="{@rows}em" width="{@cols}em">
+        <styles:block border="2pt inset silver" height="{@rows}em" width="{@cols}em">
             <xsl:choose>
                 <xsl:when test="node()">
                     <xsl:apply-templates/>
@@ -880,7 +898,7 @@
                     <xsl:text> </xsl:text>
                 </xsl:otherwise>
             </xsl:choose>
-        </fo:block>
+        </styles:block>
     </xsl:template>
 
 </xsl:stylesheet>
