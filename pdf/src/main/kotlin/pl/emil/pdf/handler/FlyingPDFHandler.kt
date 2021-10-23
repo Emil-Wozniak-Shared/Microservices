@@ -18,6 +18,7 @@ import org.springframework.web.reactive.function.server.ServerResponse.ok
 import org.w3c.dom.Document
 import org.xhtmlrenderer.pdf.DefaultPDFCreationListener
 import org.xhtmlrenderer.pdf.ITextRenderer
+import pl.emil.contract.model.User
 import pl.emil.pdf.templates.MailBodyTemplate
 import pl.emil.pdf.web.UserClient
 import pl.emil.pdf.web.bodyFlowAndAwait
@@ -35,6 +36,7 @@ class FlyingPDFHandler(private val userClient: UserClient) : PDFCreator {
 
     suspend fun getPdf(request: ServerRequest): ServerResponse =
         try {
+            User()
             userClient.getUsers {
                 models.put("users", it)
             }

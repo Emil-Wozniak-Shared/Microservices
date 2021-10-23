@@ -20,7 +20,7 @@ class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
             endpoint("users") {}
             endpoint("posts") {}
             route {
-                host(LOCALHOST) and path("/error/**")
+                localhost() and path("/error/**")
                 uri(loadBalance("customers"))
                 filters {
                     retry(8)
@@ -31,11 +31,6 @@ class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
                 isWs.set(true)
                 endpoint("customers") {}
             } else endpoint("customers", useWebSocket = true) {}
-            endpoint("error") {
-                filters {
-                    retry(6)
-                }
-            }
             endpoint(
                 "http://localhost:8182",
                 "service_route_java_config",
@@ -54,7 +49,7 @@ class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
         useWebSocket: Boolean = false,
         init: PredicateSpec.() -> Unit,
     ) = this.route(id = id ?: "local-$endpoint", uri = if (loadBalance) loadBalance(endpoint) else endpoint) {
-        host(LOCALHOST) and path(if (subPaths) endpoint.withSubPaths() else endpoint)
+        localhost() and path(if (subPaths) endpoint.withSubPaths() else endpoint)
         init.invoke(this)
         if (rewritePath) {
             filters {
@@ -65,6 +60,7 @@ class SpringCloudConfig(private val headerFactory: HeaderGatewayFilterFactory) {
         build()
     }
 
+    private fun PredicateSpec.localhost() = host(LOCALHOST)
     private fun loadBalance(path: String) = "lb://$path"
     private fun String.toSegmentRegex() = "/$this(?<segment>/?.*)"
     private fun String.withSubPaths() = "/$this/**"

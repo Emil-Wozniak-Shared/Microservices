@@ -1,4 +1,8 @@
-//import java.nio.file.FileSystems
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+
+import static java.nio.file.StandardOpenOption.APPEND
 
 //file:noinspection GroovyAssignabilityCheck
 plugins {
@@ -15,6 +19,10 @@ group = "pl.emil"
 version = "0.0.1-SNAPSHOT"
 sourceCompatibility = 11
 targetCompatibility = 11
+project.ext {
+    // API client version
+    clientVersion = '1.0.1'
+}
 
 repositories {
     mavenLocal()
@@ -27,15 +35,6 @@ def springdoc(target, version = "1.5.11") {
     }
 }
 
-private addBuild() {
-//    def res = FileSystems?.getDefault()?.getPath("$buildDir", "/generated")?.toFile()?.exists() ?: false
-    if (false) {
-        dependencies {
-            implementation files("$buildDir/generated")
-        }
-    }
-}
-
 dependencies {
     springdoc("kotlin")
     springdoc("webflux-ui")
@@ -43,9 +42,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-//    addBuild()
 }
-
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     kotlinOptions {
@@ -59,7 +56,7 @@ test {
 }
 
 openApiGenerate {
-    verbose = true
+    verbose = false
     generatorName = "kotlin"
     groupId = "pl.emil"
     packageName = "contract"
@@ -71,26 +68,21 @@ openApiGenerate {
     configOptions = [dateLibrary: "java8"]
     generateModelTests = true
     generateApiTests = true
+    version = "${project.clientVersion}"
+    logToStderr = true
+    configOptions = [
+            dateLibrary: "java8"
+    ]
+    globalProperties = [
+            modelDocs: "true"
+    ]
 }
 
 publishing {
-    def clientVersion = apiVersion()
     publications {
-        // @see: https://docs.gradle.org/current/userguide/publishing_maven.html
-        contract(MavenPublication) {
-            version clientVersion
-            groupId = 'pl.emil'
-            artifactId = 'contract'
-            artifact("./build/generated/build/libs/kotlin-client-${clientVersion}.jar")
-            pom.withXml {
-                def dependencies = asNode().appendNode("dependencies")
-                configurations.compile.allDependencies.each { dep ->
-                    def depNode = dependencies.appendNode("dependency")
-                    depNode.appendNode("groupId", dep.group)
-                    depNode.appendNode("artifactId", dep.name)
-                    depNode.appendNode("version", dep.version)
-                }
-            }
+        maven(MavenPublication) {
+            artifactId = 'contract-api'
+            from components.java
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")
@@ -110,9 +102,33 @@ publishing {
                     }
                 }
             }
-
         }
-
+        // @see: https://docs.gradle.org/current/userguide/publishing_maven.html
+        contract(MavenPublication) {
+            version "${clientVersion}"
+            groupId = 'pl.emil'
+            artifactId = 'contract'
+            artifact("./build/generated/build/libs/kotlin-client-${project.clientVersion}.jar")
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = "Microservice Commons"
+                url = "http://localhost:8080/"
+                developers {
+                    developer {
+                        id = "e.wozniak"
+                        name = "Emil Woźniak"
+                        email = "emil.wozniak.2020@gmail.com"
+                    }
+                }
+            }
+        }
     }
     repositories {
         maven {
@@ -121,16 +137,6 @@ publishing {
                     : uri(layout.buildDirectory.dir("repos/releases"))
         }
     }
-
-}
-
-private def apiVersion() {
-    if (project(":").buildDir.exists()) {
-        def files = fileTree("build").filter { it.path.contains("generated/build.gradle") }.files
-        if (!files.empty) {
-            files[0].readLines().find { it.contains("version") }.replace("version '", "").replace("'", "")
-        }
-    } else "1.0.0"
 }
 
 javadoc {
@@ -139,34 +145,59 @@ javadoc {
     }
 }
 
-task createApiAndPublish(type: GradleBuild) {
-    //noinspection GroovyAssignabilityCheck
-    doFirst {
-        println ">> Build API"
-        def apiBuildFile = 'build/generated/build.gradle'
-        println "  * execute build in $apiBuildFile file"
-        buildFile './build/generated/build.gradle'
-        tasks = ['build']
-
-        println "<< Publish"
-        buildFile './build.gradle'
-        tasks = ['publishToMavenLocal']
-        println "  * Publish pl.emil:contract:${apiVersion()}"
-        println '  * Create API & Publish done'
-        exec {
-            System.getProperty("os.name").toLowerCase().with {
-                def HOME = System.getProperty("user.home")
-                println "  * ${HOME}/.m2/repository/pl/emil content: "
-                if (it =~ 'windows') {
-                    commandLine 'ls', "${HOME}\\.m2/repository\\pl\\emil"
-                } else if (it =~ 'linux') {
-                    commandLine 'ls', "${HOME}/.m2/repository/pl/emil"
-                }
-            }
-        }
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+    if (state.failure) {
+        println "${task.getName()} failed"
+    } else {
+        println "${task.getName()} done"
     }
+}
+task openApi(type: GradleBuild) {
+    try {
+        println ">> Create API"
+        buildFile ".${File.separator}build.gradle"
+        tasks = ['clean', 'openApiGenerate']
+    } catch (e) {
+        e.printStackTrace()
+    }
+}
 
-    println ">> Create API"
-    buildFile './build.gradle'
-    tasks = ['clean','openApiGenerate']
+task buildApi(type: GradleBuild) {
+    try {
+        dependsOn(openApi)
+        println ">> Build API"
+        def apiBuildFile = "build${File.separator}generated${File.separator}build.gradle"
+        def target = "${buildDir}${File.separator}generated${File.separator}build.gradle"
+        println "Target: $target"
+        try {
+            Files.write(
+                    Paths.get(target),
+                    " java { withSourcesJar() } ".getBytes(),
+                    APPEND);
+        } catch (IOException e) {
+            System.err.println(e);
+        }
+        println "  * execute build in $apiBuildFile file"
+        buildFile ".${File.separator}build${File.separator}generated${File.separator}build.gradle"
+        dir = ".${File.separator}build${File.separator}generated${File.separator}"
+        tasks = ['build', 'jar']
+        println "buildApi finished"
+    } catch (e) {
+        e.printStackTrace()
+    }
+}
+
+task publishApi() {
+    try {
+        assert project.clientVersion != null: "You must have API client version set to not null"
+        dependsOn(buildApi)
+        finalizedBy(publishToMavenLocal)
+        println "<< Publish"
+        println "  * Publish pl.emil:contract:${project.clientVersion}"
+    } catch (e) {
+        e.printStackTrace()
+    }
+}
+
+task createApiAndPublish(type: GradleBuild) {
 }

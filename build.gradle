@@ -49,6 +49,6 @@ task addCommon(type: GradleBuild) {
     println ">> Add Contract"
     println "  * Create project contract"
     buildFile './contract/build.gradle'
-    tasks = ['createApiAndPublish']
+    tasks = ['publishApi']
 }
 

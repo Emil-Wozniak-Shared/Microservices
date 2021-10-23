@@ -22,7 +22,7 @@ fun DependencyHandler.kotest(target: String = "", module: String = "", version: 
 }
 
 dependencies {
-    implementation ("pl.emil:contract:1.0.0")
+    implementation ("pl.emil:contract:1.0.1")
     implementation("org.codehaus.groovy:groovy-all:3.0.8")
     implementation("net.sourceforge.htmlcleaner:htmlcleaner:2.25")
     implementation("org.apache.xmlgraphics:fop:2.6")
