@@ -36,7 +36,6 @@ class FlyingPDFHandler(private val userClient: UserClient) : PDFCreator {
 
     suspend fun getPdf(request: ServerRequest): ServerResponse =
         try {
-            User()
             userClient.getUsers {
                 models.put("users", it)
             }

@@ -1,8 +1,5 @@
-import java.nio.file.Files
-import java.nio.file.Paths
-import java.nio.file.StandardOpenOption
-
-import static java.nio.file.StandardOpenOption.APPEND
+//file:noinspection GroovyAssignabilityCheck
+import static java.io.File.separator
 
 //file:noinspection GroovyAssignabilityCheck
 plugins {
@@ -83,6 +80,12 @@ java {
     withSourcesJar()
 }
 
+String artifactPath() {
+    return project(":").fileTree("build").filter { File it -> it.path.contains("kotlin-client-${project.clientVersion}-sources") }.empty
+            ? "./build/generated/build/libs/kotlin-client-${project.clientVersion}.jar".toString()
+            : "./build/generated/build/libs/kotlin-client-${project.clientVersion}-sources.jar".toString()
+}
+
 publishing {
     publications {
         maven(MavenPublication) {
@@ -108,12 +111,18 @@ publishing {
                 }
             }
         }
+        binaryAndSources(MavenPublication) {
+            version "plain-${clientVersion}"
+            groupId = 'pl.emil'
+            artifactId = 'contract'
+            artifact artifactPath()
+        }
         // @see: https://docs.gradle.org/current/userguide/publishing_maven.html
         contract(MavenPublication) {
             version "${clientVersion}"
             groupId = 'pl.emil'
             artifactId = 'contract'
-            artifact("./build/generated/build/libs/kotlin-client-${project.clientVersion}.jar")
+            artifact "./build/generated/build/libs/kotlin-client-${project.clientVersion}.jar".toString()
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")
@@ -150,59 +159,71 @@ javadoc {
     }
 }
 
-gradle.taskGraph.afterTask { Task task, TaskState state ->
-    if (state.failure) {
-        println "${task.getName()} failed"
-    } else {
-        println "${task.getName()} done"
-    }
-}
+def ANSI_RESET = '\033[0m'
+def ANSI_GREEN = '\033[32m'
+def ANSI_YELLOW = '\033[33m'
+def ANSI_BLUE = '\033[34m'
+
+//noinspection GroovyAssignabilityCheck
 task openApi(type: GradleBuild) {
-    try {
-        println ">> Create API"
-        buildFile ".${File.separator}build.gradle"
-        tasks = ['clean', 'openApiGenerate']
-    } catch (e) {
-        e.printStackTrace()
+    doFirst {
+        logger.lifecycle("${ANSI_BLUE}>> Create API${ANSI_RESET}")
     }
+    buildFile ".${separator}build.gradle"
+    tasks = ['clean', 'openApiGenerate']
 }
 
 task buildApi(type: GradleBuild) {
-    try {
-        dependsOn(openApi)
-        println ">> Build API"
-        def apiBuildFile = "build${File.separator}generated${File.separator}build.gradle"
-        def target = "${buildDir}${File.separator}generated${File.separator}build.gradle"
-        println "Target: $target"
-        try {
-            Files.write(
-                    Paths.get(target),
-                    " java { withSourcesJar() } ".getBytes(),
-                    APPEND);
-        } catch (IOException e) {
-            System.err.println(e);
-        }
-        println "  * execute build in $apiBuildFile file"
-        buildFile ".${File.separator}build${File.separator}generated${File.separator}build.gradle"
-        dir = ".${File.separator}build${File.separator}generated${File.separator}"
-        tasks = ['build', 'jar']
-        println "buildApi finished"
-    } catch (e) {
-        e.printStackTrace()
+    //noinspection GroovyAssignabilityCheck
+    doFirst {
+        logger.lifecycle("${ANSI_BLUE}>> Build API${ANSI_RESET}")
+    }
+//    dependsOn(openApi)
+    buildFile ".${separator}build${separator}generated${separator}build.gradle"
+    dir = ".${separator}build${separator}generated${separator}"
+    tasks = ['build']
+    doLast {
+        logger.lifecycle("${ANSI_GREEN}  * buildApi -> FINISHED${ANSI_RESET}")
     }
 }
 
 task publishApi() {
     try {
+        def apiBuildFile = "build${separator}generated${separator}build.gradle"
         assert project.clientVersion != null: "You must have API client version set to not null"
         dependsOn(buildApi)
         finalizedBy(publishToMavenLocal)
-        println "<< Publish"
-        println "  * Publish pl.emil:contract:${project.clientVersion}"
+        System.setProperty('org.gradle.color.error', 'BLUE')
+        doLast {
+            logger.warn("""
+${ANSI_BLUE}<< Publish${ANSI_RESET}
+
+  * Publish pl.emil:contract:${project.clientVersion}
+${ANSI_YELLOW}
+        Contract was created without sources and javadocs
+        
+        If you concider to have it you must append below code to build file in path
+        ${apiBuildFile}
+        \033[93m
+        java {
+            withJavadocJar()
+            withSourcesJar()
+        }
+${ANSI_RESET}
+""".toString())
+        }
     } catch (e) {
         e.printStackTrace()
     }
 }
 
-task createApiAndPublish(type: GradleBuild) {
+//noinspection GroovyAssignabilityCheck
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+    if (state.failure) {
+        logger.error("[[${task.getName()}]] ${new Date()} : Failed")
+    } else {
+        if (task.name == "openAPi" || task.name == "buildApi" || task.name == "publishApi") {
+            logger.lifecycle("${ANSI_BLUE}[[${task.getName()}]]${ANSI_RESET} ${new Date()} : ${ANSI_GREEN}Done${ANSI_RESET}")
+        }
+    }
 }

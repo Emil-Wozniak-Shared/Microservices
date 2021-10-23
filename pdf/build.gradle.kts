@@ -84,11 +84,3 @@ sourceSets {
         }
     }
 }
-
-//tasks.register<com.github.spotbugs.snom.SpotBugsTask>("spotbugsMain") {
-//    dependsOn ("classes")
-//    classDirs = sourceSets.main
-//    sourceDirs = sourceSets.main.allSource.sourceDirectories
-//    auxClassPaths = sourceSets.main.compileClasspath
-//    reports { xml.enabled = true }
-//}
