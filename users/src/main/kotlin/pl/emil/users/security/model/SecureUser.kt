@@ -3,9 +3,9 @@ package pl.emil.users.security.model
 import org.springframework.core.env.Environment
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import pl.emil.contract.model.Token
 import pl.emil.users.model.User
 import pl.emil.users.security.token.JwtSigner
-import pl.emil.users.model.Token
 
 /**
  * inherits from UserDetails

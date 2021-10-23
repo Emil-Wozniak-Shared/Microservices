@@ -7,6 +7,7 @@ plugins {
     id("io.kotest") version "0.3.8"
     id("org.springframework.boot") version "2.5.5"
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id "com.github.spotbugs-base" version "4.7.9"
 }
 
 group = "pl.emil"
@@ -27,6 +28,8 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.glassfish.jaxb:jaxb-runtime")
+    compileOnly "com.github.spotbugs:spotbugs-annotations:${spotbugs.toolVersion.get()}"
+    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.11.0'
 }
 
 
@@ -52,3 +55,11 @@ task addCommon(type: GradleBuild) {
     tasks = ['createApiAndPublish']
 }
 
+
+task spotbugsMain(type: com.github.spotbugs.snom.SpotBugsTask) {
+    dependsOn 'classes'
+    classDirs = sourceSets.main.output
+    sourceDirs = sourceSets.main.allSource.sourceDirectories
+    auxClassPaths = sourceSets.main.compileClasspath
+    reports { html.enabled = true }
+}

@@ -73,6 +73,11 @@ openApiGenerate {
     generateApiTests = true
 }
 
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
 publishing {
     def clientVersion = apiVersion()
     publications {
@@ -139,34 +144,41 @@ javadoc {
     }
 }
 
-task createApiAndPublish(type: GradleBuild) {
-    //noinspection GroovyAssignabilityCheck
-    doFirst {
-        println ">> Build API"
-        def apiBuildFile = 'build/generated/build.gradle'
-        println "  * execute build in $apiBuildFile file"
-        buildFile './build/generated/build.gradle'
-        tasks = ['build']
-
-        println "<< Publish"
-        buildFile './build.gradle'
-        tasks = ['publishToMavenLocal']
-        println "  * Publish pl.emil:contract:${apiVersion()}"
-        println '  * Create API & Publish done'
-        exec {
-            System.getProperty("os.name").toLowerCase().with {
-                def HOME = System.getProperty("user.home")
-                println "  * ${HOME}/.m2/repository/pl/emil content: "
-                if (it =~ 'windows') {
-                    commandLine 'ls', "${HOME}\\.m2/repository\\pl\\emil"
-                } else if (it =~ 'linux') {
-                    commandLine 'ls', "${HOME}/.m2/repository/pl/emil"
-                }
-            }
-        }
-    }
-
+task openApi(type: GradleBuild) {
     println ">> Create API"
     buildFile './build.gradle'
-    tasks = ['clean','openApiGenerate']
+    tasks = ['clean', 'openApiGenerate']
+}
+
+task jarApi(type: GradleBuild) {
+    dependsOn(openApi)
+    println ">> Build API"
+    def apiBuildFile = 'build/generated/build.gradle'
+    println "  * execute build in $apiBuildFile file"
+    buildFile './build/generated/build.gradle'
+    tasks = ['build']
+}
+
+task publishApi() {
+    dependsOn(jarApi)
+    println "<< Publish"
+    tasks.publishToMavenLocal.mustRunAfter(jarApi)
+//    buildFile './build.gradle'
+//    tasks = ['publishToMavenLocal']
+    println "  * Publish pl.emil:contract:${apiVersion()}"
+    println '  * Create API & Publish done'
+}
+
+task createApiAndPublish(type: GradleBuild) {
+//    buildFile './build.gradle'
+    tasks = ['openApi'] //, 'jarApi', 'publishApi'
+}
+
+gradle.taskGraph.afterTask { Task task, TaskState state ->
+    println task.getName()
+    if (state.failure) {
+        println "${task.getName()} FAILED!!!"
+    } else {
+        println "SUCCESS!!!"
+    }
 }

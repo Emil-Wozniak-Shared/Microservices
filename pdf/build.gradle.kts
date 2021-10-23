@@ -6,6 +6,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.11.RELEASE"
     kotlin("jvm") version "1.5.31"
     kotlin("plugin.spring") version "1.5.31"
+    id ("com.github.spotbugs-base") version "4.7.9"
 }
 
 group = "pl.emil"
@@ -83,3 +84,11 @@ sourceSets {
         }
     }
 }
+
+//tasks.register<com.github.spotbugs.snom.SpotBugsTask>("spotbugsMain") {
+//    dependsOn ("classes")
+//    classDirs = sourceSets.main
+//    sourceDirs = sourceSets.main.allSource.sourceDirectories
+//    auxClassPaths = sourceSets.main.compileClasspath
+//    reports { xml.enabled = true }
+//}

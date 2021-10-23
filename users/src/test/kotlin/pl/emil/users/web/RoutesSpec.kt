@@ -20,7 +20,7 @@ import org.springframework.http.MediaType.*
 import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.springframework.test.web.reactive.server.returnResult
-import pl.emil.users.model.Login
+import pl.emil.contract.model.Login
 import pl.emil.users.model.Token
 import pl.emil.users.model.User
 import pl.emil.users.model.UsersXML

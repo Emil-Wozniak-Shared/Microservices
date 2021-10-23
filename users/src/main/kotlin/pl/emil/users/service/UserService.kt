@@ -8,13 +8,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import pl.emil.contract.model.Token
 import pl.emil.users.model.User
 import pl.emil.users.model.UsersXML
 import pl.emil.users.repo.UserRepository
 import pl.emil.users.security.model.SecureUser
 import pl.emil.users.security.model.tokenize
 import pl.emil.users.security.token.JwtSigner
-import pl.emil.users.model.Token
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers.boundedElastic

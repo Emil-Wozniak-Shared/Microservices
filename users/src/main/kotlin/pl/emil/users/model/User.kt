@@ -10,6 +10,7 @@ import java.util.*
 import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.annotation.XmlType
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import pl.emil.contract.model.User as Model
 
 /**
  * https://www.dariawan.com/tutorials/java/using-jaxb-java-11/
