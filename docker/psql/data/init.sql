@@ -1,5 +1,8 @@
-CREATE USER ifzz WITH PASSWORD 'ifzz' LOGIN ;
+CREATE USER ifzz WITH PASSWORD 'ifzz' LOGIN;
+ALTER USER ifzz WITH SUPERUSER CREATEDB CREATEROLE INHERIT LOGIN REPLICATION;
+CREATE DATABASE ifzz;
 CREATE DATABASE microservice;
+GRANT ALL PRIVILEGES ON DATABASE ifzz TO ifzz;
 GRANT ALL PRIVILEGES ON DATABASE microservice TO ifzz;
 
 \c microservice
@@ -68,20 +71,20 @@ $do$
                 RAISE NOTICE 'Create table: %', name;
                 IF isTimestamp THEN
                     EXECUTE format(
-                                            'CREATE TABLE IF NOT EXISTS ' || name ||
-                                            ' (
-                                            id UUID DEFAULT uuid_generate_v1(), ' ||
-                                            columns || ',
+                                        'CREATE TABLE IF NOT EXISTS ' || name ||
+                                        ' (
+                                        id UUID DEFAULT uuid_generate_v1(), ' ||
+                                        columns || ',
                                         created_at TIMESTAMP NOT NULL,
                                         updated_at TIMESTAMP,
                                         version INTEGER, PRIMARY KEY (id)
                                         );');
                 ELSE
                     EXECUTE format(
-                                            'CREATE TABLE IF NOT EXISTS ' || name ||
-                                            ' (
-                                            id UUID DEFAULT uuid_generate_v1(), ' ||
-                                            columns || ',
+                                        'CREATE TABLE IF NOT EXISTS ' || name ||
+                                        ' (
+                                        id UUID DEFAULT uuid_generate_v1(), ' ||
+                                        columns || ',
                                         version INTEGER, PRIMARY KEY (id)
                                         );');
                 END IF;

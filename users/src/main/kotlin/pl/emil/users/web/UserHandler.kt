@@ -43,7 +43,13 @@ class UserHandler(
         request.headers().contentType().let { contentType ->
             if (contentType.isPresent && contentType.get() == APPLICATION_XML)
                 ok().mediaType(request).body(service.getAllAsXML())
-            else ok().body(service.getAll())
+            else {
+                val all = service.getAll()
+                all.doOnNext {
+                    println(it)
+                }
+                ok().body(all)
+            }
         }
 
     override fun getOne(request: ServerRequest): Mono<ServerResponse> =
@@ -53,7 +59,7 @@ class UserHandler(
                 .flatMap { user ->
                     user?.let {
                         ok().mediaType(request).bodyValue(it)
-                    } ?: badRequest().bodyValue("User with id: $id doent't exist")
+                    } ?: badRequest().bodyValue("User with id: $id doesn't exist")
                 }
                 .onErrorResponse()
         }
