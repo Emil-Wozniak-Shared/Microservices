@@ -5,6 +5,7 @@ import org.springframework.boot.runApplication
 import org.springframework.cloud.context.config.annotation.RefreshScope
 import pl.emil.users.config.thenLog
 
+
 @RefreshScope
 @SpringBootApplication
 class UsersApplication
