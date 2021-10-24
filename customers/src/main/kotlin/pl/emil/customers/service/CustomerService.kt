@@ -9,9 +9,7 @@ import java.time.Duration
 import java.time.Duration.ofSeconds
 
 @Service
-class CustomerService(
-    private val env: Environment
-) {
+class CustomerService(private val env: Environment) {
 
     private val names = "${env.getProperty("config.server.users")},".split(",")
 

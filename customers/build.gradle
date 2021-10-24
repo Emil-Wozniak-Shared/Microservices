@@ -1,5 +1,4 @@
-import org.gradle.api.tasks.GradleBuild
-
+//file:noinspection GroovyAssignabilityCheck
 buildscript {
     repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
     dependencies {
@@ -41,6 +40,10 @@ dependencies {
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    implementation("io.swagger.core.v3:swagger-annotations:2.1.11")
+    implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.12")
+    implementation("org.springframework.boot:spring-boot-configuration-processor:2.5.6")
+
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -52,7 +55,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 task addCommon(type: GradleBuild) {
     doLast {
-        println 'Done'
+        logger.lifecycle 'Done'
     }
     println "Add common"
     println "Create project common"

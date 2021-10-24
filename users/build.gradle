@@ -1,3 +1,5 @@
+import com.github.spotbugs.snom.SpotBugsTask
+
 buildscript {
     repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
     dependencies {
@@ -66,7 +68,6 @@ dependencies {
     implementation "org.springdoc:springdoc-openapi-data-rest:1.5.12"
     implementation 'io.springfox:springfox-swagger2:3.0.0'
     implementation "org.springdoc:springdoc-openapi-ui:1.5.12"
-
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
@@ -78,7 +79,7 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
 
 task addCommon(type: GradleBuild) {
     doLast {
-        println 'Done'
+        logger.lifecycle 'Done'
     }
     println "Add common"
     println "Create project common"
@@ -86,7 +87,7 @@ task addCommon(type: GradleBuild) {
     tasks = ['publishToMavenLocal']
 }
 
-task spotbugsMain(type: com.github.spotbugs.snom.SpotBugsTask) {
+task spotbugsMain(type: SpotBugsTask) {
     dependsOn 'classes'
     classDirs = sourceSets.main.output
     sourceDirs = sourceSets.main.allSource.sourceDirectories

@@ -19,6 +19,14 @@ spring:
 
 server:
   port: ${PORT:8060}
+  servlet:
+    context-path: /
+    compression:
+      enabled: true
+      mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+      min-response-size: 1024
+    http2:
+      enabled: true
 
 eureka:
   instance:
@@ -38,3 +46,7 @@ management:
     web:
       exposure:
         include: "*"
+springdoc:
+  version: '@springdoc.version@'
+  swagger-ui:
+    use-root-path: true
