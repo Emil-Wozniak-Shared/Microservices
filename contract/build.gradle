@@ -178,7 +178,7 @@ task buildApi(type: GradleBuild) {
     doFirst {
         logger.lifecycle("${ANSI_BLUE}>> Build API${ANSI_RESET}")
     }
-//    dependsOn(openApi)
+    dependsOn(openApi)
     buildFile ".${separator}build${separator}generated${separator}build.gradle"
     dir = ".${separator}build${separator}generated${separator}"
     tasks = ['build']
