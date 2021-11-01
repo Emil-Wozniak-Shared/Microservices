@@ -1,0 +1,57 @@
+
+DB_PORT: 5434
+spring:
+  cloud:
+    config:
+      enabled: false
+  application:
+    name: customers
+  main:
+    web-application-type: reactive
+    allow-bean-definition-overriding: true
+  r2dbc:
+    url: r2dbc:postgresql://localhost:${DB_PORT:5432}/microservice
+    username: ${DB_USER:ifzz}
+    password: ${DB_PASS:ifzz}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  devtools:
+    restart:
+      enabled: true
+
+server:
+  port: ${PORT:8060}
+  servlet:
+    context-path: /
+    compression:
+      enabled: true
+      mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+      min-response-size: 1024
+    http2:
+      enabled: true
+
+eureka:
+  client:
+    enabled: false
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+#  client:
+#    allow-redirects: true
+#    service-url:
+#      defaultZone: http://localhost:8010/eureka/
+#    fetch-registry: true
+#    register-with-eureka: true
+management:
+  cloudfoundry:
+    enabled: true
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*"
+springdoc:
+  swagger-ui:
+    use-root-path: true
+  packages-to-scan: pl.emil.customers.repo, pl.emil.customers.service
