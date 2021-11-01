@@ -50,4 +50,7 @@ data class SecureUser(
 fun Environment.getExpiration() = this.getProperty("token.expiration_time")?.toInt() ?: 7200
 
 fun SecureUser.tokenize(signer: JwtSigner, env: Environment) =
-    Token(signer.createJwt(username), env.getExpiration())
+    Token().apply {
+        this.token = signer.createJwt(username)
+        this.expiresIn = env.getExpiration()
+    }

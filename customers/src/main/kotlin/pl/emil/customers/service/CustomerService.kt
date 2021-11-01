@@ -1,26 +1,30 @@
 package pl.emil.customers.service
 
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.context.annotation.Bean
-import org.springframework.core.env.Environment
 import org.springframework.stereotype.Service
 import pl.emil.customers.model.Customer
+import pl.emil.customers.repo.CustomerRepo
 import reactor.core.publisher.Flux
-import java.time.Duration
 import java.time.Duration.ofSeconds
+import java.util.*
 
 @Service
-class CustomerService(private val env: Environment) {
-
-    private val names = "${env.getProperty("config.server.users")},".split(",")
+@Tag(name = "Customers")
+class CustomerService(private val repo: CustomerRepo) {
 
     @Bean
     fun customers() = customers.publish().autoConnect()
 
+    @Operation(description = "get all the customers")
+    fun getAll(): Flux<Customer> = customers
+
+    fun findAll(): List<Customer> = repo.findAll()
+
+    fun findById(id: Long): Optional<Customer> = repo.findById(id)
+
     private val customers = Flux
-        .fromStream {
-            names.mapIndexed { index, name ->
-                Customer(index.toLong(), name)
-            }.stream()
-        }
+        .fromStream { repo.findAll().stream() }
         .delayElements(ofSeconds(3))
 }

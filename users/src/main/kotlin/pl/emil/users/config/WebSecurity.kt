@@ -33,6 +33,7 @@ class WebSecurity(private val signer: JwtSigner): SecurityWebConfig {
             addFilterAt(JWTWebFilter(authenticationManager), AUTHENTICATION)
             securityContextRepository(BearerServerSecurityContextRepository())
             authorizeExchange()
+                .pathMatchers("/**").permitAll()
                 .pathMatchers("/yml").permitAll()
                 .pathMatchers("/swagger-ui").permitAll()
                 .pathMatchers("/swagger").permitAll()

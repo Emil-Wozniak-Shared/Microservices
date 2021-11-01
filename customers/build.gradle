@@ -1,32 +1,36 @@
-//file:noinspection GroovyAssignabilityCheck
-buildscript {
-    repositories { maven { url = uri("https://plugins.gradle.org/m2/") } }
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-allopen:1.5.0-M1")
-    }
-}
-
 plugins {
     id "java"
     id "idea"
-    id("io.kotest") version "0.3.8"
-    id "org.jetbrains.kotlin.jvm" version "1.5.31"
-    id "org.jetbrains.kotlin.plugin.spring" version "1.5.31"
-    id("org.springframework.boot") version "2.4.3"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id 'groovy'
+    id 'org.jetbrains.kotlin.jvm'
+    id 'org.jetbrains.kotlin.plugin.spring'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+    id 'org.springframework.cloud.contract'
+    id "io.kotest" version "0.3.7"
 }
 
-apply plugin: "org.jetbrains.kotlin.plugin.spring"
 apply from: "../gradle-addons/core.gradle"
 apply from: "../gradle-addons/spring.gradle"
-apply from: "../gradle-addons/jetbrains.gradle"
 apply from: '../gradle-addons/kotest.gradle'
-apply from: "../gradle-addons/common.gradle"
 
 group = "pl.emil"
 version = "0.0.1-SNAPSHOT"
-sourceCompatibility = 11
-targetCompatibility = 11
+java.sourceCompatibility = JavaVersion.VERSION_11
+
+//noinspection GroovyAssignabilityCheck
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://repo.spring.io/snapshot" }
+    maven { url "https://repo.spring.io/milestone" }
+    maven { url "https://repo.spring.io/release" }
+}
+
+ext {
+    set('springCloudVersion', "${BOM_VERSION}")
+    set('json-path.version', '2.6.0')
+}
 
 dependencies {
     implementation group: "pl.emil", name: "common", version: "0.1.1-SNAPSHOT"
@@ -38,11 +42,20 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("io.projectreactor:reactor-test")
     implementation("io.swagger.core.v3:swagger-annotations:2.1.11")
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.12")
     implementation("org.springframework.boot:spring-boot-configuration-processor:2.5.6")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("io.projectreactor:reactor-test")
+    testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-verifier")
+    testImplementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
+    testImplementation("org.spockframework:spock-core:$spockVersion")
+    testImplementation("org.spockframework:spock-spring:$spockVersion")
+    testImplementation "org.spockframework:spock-spring:$spockVersion"
+    testImplementation("org.codehaus.groovy:groovy-all:$groovyVersion")
+    testImplementation 'com.h2database:h2:1.4.200'
 
 }
 
@@ -53,12 +66,45 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     }
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}")
+    }
+}
+
+contracts {
+    testFramework = "SPOCK"
+    contractsMode = "LOCAL"
+    packageWithBaseClasses = "pl.emil.customers.spec"
+    baseClassForTests = "pl.emil.customers.spec"
+    baseClassMappings {
+        baseClassMapping(".*", "pl.emil.customers.spec.BaseSpec")
+    }
+}
+
+contractTest {
+    useJUnitPlatform()
+    testLogging {
+        exceptionFormat = 'full'
+    }
+    //noinspection GroovyAssignabilityCheck
+    afterSuite { desc, result ->
+        if (!desc.parent) {
+            logger.lifecycle "Results: (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+            boolean skipTests = Boolean.parseBoolean((project.findProperty('SKIP_TESTS') ?: "false") as String)
+            if (result.testCount == 0 && !skipTests) {
+                throw new IllegalStateException("No tests were found. Failing the build")
+            }
+        }
+    }
+}
+
 task addCommon(type: GradleBuild) {
     doLast {
         logger.lifecycle 'Done'
     }
-    println "Add common"
-    println "Create project common"
+    logger.lifecycle "Add common"
+    logger.lifecycle "Create project common"
     buildFile '../common/build.gradle'
     tasks = ['publishToMavenLocal']
 }

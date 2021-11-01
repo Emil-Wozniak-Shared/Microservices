@@ -44,11 +44,7 @@ class UserHandler(
             if (contentType.isPresent && contentType.get() == APPLICATION_XML)
                 ok().mediaType(request).body(service.getAllAsXML())
             else {
-                val all = service.getAll()
-                all.doOnNext {
-                    println(it)
-                }
-                ok().body(all)
+                ok().body(service.getAllUsers())
             }
         }
 

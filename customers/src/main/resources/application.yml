@@ -50,3 +50,4 @@ springdoc:
   version: '@springdoc.version@'
   swagger-ui:
     use-root-path: true
+  packages-to-scan: pl.emil.customers.repo, pl.emil.customers.service

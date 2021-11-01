@@ -18,7 +18,7 @@ sourceCompatibility = 11
 targetCompatibility = 11
 project.ext {
     // API client version
-    clientVersion = '1.0.1'
+    clientVersion = '1.0.2'
 }
 
 repositories {
@@ -54,7 +54,7 @@ test {
 
 openApiGenerate {
     verbose = false
-    generatorName = "kotlin"
+    generatorName = "java"
     groupId = "pl.emil"
     packageName = "contract"
     inputSpec = "$rootDir/src/main/resources/api.json".toString()
@@ -68,10 +68,16 @@ openApiGenerate {
     version = "${project.clientVersion}"
     logToStderr = true
     configOptions = [
-            dateLibrary: "java8"
+            library: "webclient",
+            dateLibrary: "java8",
+            licenseName: "Apache License, Version 2.0",
+            licenseUrl: "https://www.apache.org/licenses/LICENSE-2.0",
+            serializationLibrary: "jackson",
+            useRxJava3: "true"
     ]
     globalProperties = [
-            modelDocs: "true"
+            modelDocs: "false",
+            useCoroutines: "true",
     ]
 }
 
@@ -115,14 +121,15 @@ publishing {
             version "plain-${clientVersion}"
             groupId = 'pl.emil'
             artifactId = 'contract'
-            artifact artifactPath()
+            artifact "./build/generated/build/libs/openapi-java-client-${project.clientVersion}-sources.jar".toString()
         }
         // @see: https://docs.gradle.org/current/userguide/publishing_maven.html
         contract(MavenPublication) {
             version "${clientVersion}"
             groupId = 'pl.emil'
             artifactId = 'contract'
-            artifact "./build/generated/build/libs/kotlin-client-${project.clientVersion}.jar".toString()
+//            openapi-java-client-1.0.2.jar
+            artifact "./build/generated/build/libs/openapi-java-client-${project.clientVersion}.jar".toString()
             versionMapping {
                 usage("java-api") {
                     fromResolutionOf("runtimeClasspath")

@@ -1,15 +1,13 @@
 package pl.emil.customers.web
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.reactive.awaitFirst
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.web.reactive.function.server.body
-import org.springframework.web.reactive.function.server.coRouter
+import org.springframework.web.reactive.function.server.router
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.WebSocketHandler
+import pl.emil.customers.handler.CustomerHandler
 import pl.emil.customers.model.Customer
 import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicInteger
@@ -38,27 +36,25 @@ class RouteConfig(private val mapper: ObjectMapper) {
     val countErrors = hashMapOf<String, AtomicInteger>()
 
     @Bean
-    fun routes(customers: Flux<Customer>) =
-        coRouter {
+    fun routes(customers: Flux<Customer>, customerHandler: CustomerHandler) =
+        router {
             "error".nest {
                 GET("{id}") {
                     val id = it.pathVariable("id")
                     val result = countResponse(id)?.get() ?: 0
                     if (result < 5) {
-                        status(SERVICE_UNAVAILABLE).build().awaitFirst()
+                        status(SERVICE_UNAVAILABLE).build()
                     } else {
                         ok().bodyValue(mapOf(
                             "message" to "good job",
                             id to ", you did it on try #${countErrors}"
-                        )).awaitFirst()
+                        ))
                     }
                 }
             }
             "api".nest {
                 "customers".nest {
-                    GET("") {
-                        ok().contentType(APPLICATION_JSON).body(customers).awaitFirst()
-                    }
+                    GET("", customerHandler::getAll)
                 }
             }
         }
