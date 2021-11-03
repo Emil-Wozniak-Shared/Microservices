@@ -104,6 +104,9 @@ Notice that Projects are not Modules
 - **contract**
   - *PROJECT*
   - OpenApi models and endpoints 
+- **customers**
+  - *PROJECT*
+  - 
 - **docker**:
   - *DIR*
   - docker images

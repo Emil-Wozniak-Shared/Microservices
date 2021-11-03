@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus.SERVICE_UNAVAILABLE
+import org.springframework.stereotype.Controller
 import org.springframework.web.reactive.function.server.router
 import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping
 import org.springframework.web.reactive.socket.WebSocketHandler
@@ -12,7 +13,7 @@ import pl.emil.customers.model.Customer
 import reactor.core.publisher.Flux
 import java.util.concurrent.atomic.AtomicInteger
 
-@Configuration
+@Controller
 class RouteConfig(private val mapper: ObjectMapper) {
 
     @Throws(Exception::class)

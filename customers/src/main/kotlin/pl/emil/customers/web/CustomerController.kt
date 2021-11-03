@@ -24,7 +24,8 @@ class CustomerController(private val service: CustomerService) {
             .map {
                 ok().contentType(APPLICATION_JSON).body(it)
             }
-            .orElse(
+            .orElseGet {
                 badRequest().contentType(APPLICATION_JSON).build()
-            )
+            }
+
 }

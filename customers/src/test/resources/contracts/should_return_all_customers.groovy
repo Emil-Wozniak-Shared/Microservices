@@ -11,10 +11,10 @@ Contract.make {
         then:   we will return list of 2 elements with 1 element of name Jane and id 1L
         """
     request {
-        url "/customers"
+        url "/api/customers"
         method GET()
         headers {
-            contentType(applicationJson())
+            contentType applicationJson()
         }
     }
     response {
@@ -24,7 +24,7 @@ Contract.make {
                 [id: 2L, name: "Bob"]
         ])
         headers {
-            contentType(applicationJson())
+            contentType applicationJson()
         }
     }
 }
