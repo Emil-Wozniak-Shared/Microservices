@@ -73,7 +73,11 @@ fun passwordEncoder(): PasswordEncoder {
 ```
 
 ## Used technologies
-
+- Spring Boot 
+- Spring Discovery server
+- Spring Config Server
+- Spring Gateway
+- Spring Contract Verifier 
 - [RouterFunctionDsl](http://doc.lisonghong.com/docs/kdoc-api/spring-framework/org.springframework.web.reactive.function.server/-router-function-dsl/index.html)
 - [R2DBC](https://r2dbc.io/)
 - [Spring Cloud Contract](https://spring.io/projects/spring-cloud-contract)
